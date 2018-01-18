@@ -14,6 +14,7 @@
  * terms of that agreement.
  *
  ******************************************************************************/
+#include <usart.h>
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_cmu.h"
@@ -24,13 +25,17 @@
 #include "i2cspm.h"
 
 #include "bme280.h"
-#include "rn2483.h"
 #include "delay.h"
 
+#define BUFFERSIZE 50
 
 int main(void){
 
 	I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
+
+	char transmitBuffer[] = "sys get ver\r\n";
+	char receiveBuffer[BUFFERSIZE];
+	memset(receiveBuffer, '\0', BUFFERSIZE);
 
 	/* Chip errata */
 	CHIP_Init();
@@ -52,8 +57,17 @@ int main(void){
 	GPIO_PinOutSet(gpioPortC, 2);
 
 	while(1){
-		char test[] = "sys get ver\r\n";
+		/*char test[] = "sys get ver\r\n";
 		USART0_WriteString(test);
+		char response [] = "dit is een test dit is een test";
+		DelayMs(5);
+		USART0_ReadString(response);
+		DelayMs(1000);*/
+
+		USART0_SendBuffer(transmitBuffer, 13);
+		USART0_ReceiveBuffer(receiveBuffer, BUFFERSIZE);
+		DelayMs(50);
+
 		DelayMs(1000);
 	}
     /* Infinite loop */

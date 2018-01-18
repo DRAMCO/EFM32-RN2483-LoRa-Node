@@ -209,7 +209,7 @@
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/common/drivers&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/platform/Device/SiliconLabs/EFM32HG/Include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${StudioSdkPath}/hardware/kit/SLSTK3400A_EFM32HG/config&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/STM32-RN2483-LoRa-Node/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/EFM32-RN2483-LoRa-Node/inc}&quot;"/>
 								</option>
 								<inputType id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.input.1478782805" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

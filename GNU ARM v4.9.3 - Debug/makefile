@@ -26,35 +26,35 @@ endif
 # Add inputs and outputs from these tool invocations to the build variables 
 
 # All Target
-all: STM32-RN2483-LoRa-Node.axf
+all: EFM32-RN2483-LoRa-Node.axf
 
 # Tool invocations
-STM32-RN2483-LoRa-Node.axf: $(OBJS) $(USER_OBJS)
+EFM32-RN2483-LoRa-Node.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GNU ARM C Linker'
-	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "STM32-RN2483-LoRa-Node.ld" -Xlinker --gc-sections -Xlinker -Map="STM32-RN2483-LoRa-Node.map" --specs=nano.specs -o STM32-RN2483-LoRa-Node.axf "./CMSIS/EFM32HG/startup_efm32hg.o" "./CMSIS/EFM32HG/system_efm32hg.o" "./Drivers/i2cspm.o" "./emlib/em_cmu.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_i2c.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/bme280.o" "./src/delay.o" "./src/main.o" "./src/rn2483.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "EFM32-RN2483-LoRa-Node.ld" -Xlinker --gc-sections -Xlinker -Map="EFM32-RN2483-LoRa-Node.map" --specs=nano.specs -o EFM32-RN2483-LoRa-Node.axf "./CMSIS/EFM32HG/startup_efm32hg.o" "./CMSIS/EFM32HG/system_efm32hg.o" "./Drivers/i2cspm.o" "./emlib/em_cmu.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_i2c.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/bme280.o" "./src/delay.o" "./src/main.o" "./src/usart.o" -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
-	@echo 'Building hex file: STM32-RN2483-LoRa-Node.hex'
-	arm-none-eabi-objcopy -O ihex "STM32-RN2483-LoRa-Node.axf" "STM32-RN2483-LoRa-Node.hex"
+	@echo 'Building hex file: EFM32-RN2483-LoRa-Node.hex'
+	arm-none-eabi-objcopy -O ihex "EFM32-RN2483-LoRa-Node.axf" "EFM32-RN2483-LoRa-Node.hex"
 	@echo ' '
 
-	@echo 'Building bin file: STM32-RN2483-LoRa-Node.bin'
-	arm-none-eabi-objcopy -O binary "STM32-RN2483-LoRa-Node.axf" "STM32-RN2483-LoRa-Node.bin"
+	@echo 'Building bin file: EFM32-RN2483-LoRa-Node.bin'
+	arm-none-eabi-objcopy -O binary "EFM32-RN2483-LoRa-Node.axf" "EFM32-RN2483-LoRa-Node.bin"
 	@echo ' '
 
-	@echo 'Building s37 file: STM32-RN2483-LoRa-Node.s37'
-	arm-none-eabi-objcopy -O srec "STM32-RN2483-LoRa-Node.axf" "STM32-RN2483-LoRa-Node.s37"
+	@echo 'Building s37 file: EFM32-RN2483-LoRa-Node.s37'
+	arm-none-eabi-objcopy -O srec "EFM32-RN2483-LoRa-Node.axf" "EFM32-RN2483-LoRa-Node.s37"
 	@echo ' '
 
 	@echo 'Running size tool'
-	arm-none-eabi-size "STM32-RN2483-LoRa-Node.axf"
+	arm-none-eabi-size "EFM32-RN2483-LoRa-Node.axf"
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) STM32-RN2483-LoRa-Node.axf
+	-$(RM) $(EXECUTABLES)$(OBJS)$(C_DEPS) EFM32-RN2483-LoRa-Node.axf
 	-@echo ' '
 
 .PHONY: all clean dependents

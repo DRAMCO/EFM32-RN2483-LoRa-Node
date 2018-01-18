@@ -1,25 +1,13 @@
 /*
  * rn2483.h
  *
- *  Created on: 19-dec.-2017
+ *  Created on: 18-jan.-2018
  *      Author: Guus Leenders
  */
 
-#ifndef RN2483_H_
-#define RN2483_H_
+#ifndef INC_RN2483_H_
+#define INC_RN2483_H_
 
-#include "em_device.h"
-#include "em_chip.h"
-#include "em_cmu.h"
-#include "em_emu.h"
-#include "em_usart.h"
 
-#define COM_PORT gpioPortE // USART location #1: PE10 and PE11
-#define UART_TX_pin 10      // PE10
-#define UART_RX_pin 11      // PE11
 
-void USART0_Setup();
-void USART0_WriteByte(uint8_t value);
-void USART0_WriteString(char *string);
-
-#endif /* RN2483_H_ */
+#endif /* INC_RN2483_H_ */

@@ -50,8 +50,8 @@ src/bme280.o: ../src/bme280.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\platform\emlib\inc\em_bus.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\platform\emlib\inc\em_assert.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\platform\emlib\inc\em_i2c.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\STM32-RN2483-LoRa-Node\inc/bme280.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\STM32-RN2483-LoRa-Node\inc/delay.h
+ C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h \
+ C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\hardware\kit\common\drivers\i2cspm.h:
 
@@ -155,6 +155,6 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.0\platform\emlib\inc\em_i2c.h:
 
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\STM32-RN2483-LoRa-Node\inc/bme280.h:
+C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h:
 
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\STM32-RN2483-LoRa-Node\inc/delay.h:
+C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h:
