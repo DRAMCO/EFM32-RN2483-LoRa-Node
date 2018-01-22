@@ -25,6 +25,7 @@
 #include "i2cspm.h"
 
 #include "bme280.h"
+#include "rn2483.h"
 #include "delay.h"
 
 #define BUFFERSIZE 50
@@ -33,9 +34,12 @@ int main(void){
 
 	I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
 
-	char transmitBuffer[] = "sys get ver\r\n";
 	char receiveBuffer[BUFFERSIZE];
 	memset(receiveBuffer, '\0', BUFFERSIZE);
+
+	char deviceEUI[] = "0053AC923819B937";
+	char applicationEUI[] = "70B3D57ED00096E2";
+	char applicationKey[] = "7C8E68C713058981EDA0AB6A27739D68";
 
 	/* Chip errata */
 	CHIP_Init();
@@ -53,22 +57,18 @@ int main(void){
 
 	USART0_Setup();
 
+	RN2483_Init();
+
 
 	GPIO_PinOutSet(gpioPortC, 2);
 
 	while(1){
-		/*char test[] = "sys get ver\r\n";
-		USART0_WriteString(test);
-		char response [] = "dit is een test dit is een test";
-		DelayMs(5);
-		USART0_ReadString(response);
-		DelayMs(1000);*/
+		//USART0_SendBuffer(transmitBuffer, 13);
+		//USART0_ReceiveBuffer(receiveBuffer, BUFFERSIZE);
 
-		USART0_SendBuffer(transmitBuffer, 13);
-		USART0_ReceiveBuffer(receiveBuffer, BUFFERSIZE);
-		DelayMs(50);
+		bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 
-		DelayMs(1000);
+		DelayMs(5000);
 	}
     /* Infinite loop */
     /*while (1) {

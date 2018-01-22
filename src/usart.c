@@ -160,13 +160,13 @@ void USART0_TX_IRQHandler(void){
  *****************************************************************************/
 void USART0_ReceiveBuffer(char* receiveBuffer, int bufferSize){
   USART_TypeDef *uart = USART0;
-  int           ii;
+  int           ii =0;
   char a = 0;
 
   memset(receiveBuffer, '\0', bufferSize);
 
   /* Receiving data */
-  while(a != '\n' & ii <bufferSize)
+  while((a != '\n') && (ii <bufferSize))
   {
     /* Waiting for the usart to be ready */
     while (!(uart->STATUS & USART_STATUS_RXDATAV)) ;
