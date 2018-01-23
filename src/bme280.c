@@ -239,7 +239,6 @@ int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp){
 	int32_t t_fine = var1 + var2;
 
 	*temp = (t_fine * 5 + 128) >> 8;
-
 	return 0;
 }
 

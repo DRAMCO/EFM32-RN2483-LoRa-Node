@@ -12,5 +12,6 @@
 #include <stdbool.h>
 
 bool StringStartsWith(char * str, char * seq);
+char * StringToHexString(char * bin, unsigned int binsz, char **result );
 
 #endif /* INC_UTIL_H_ */
