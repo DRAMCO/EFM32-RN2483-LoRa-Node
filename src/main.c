@@ -110,7 +110,7 @@ int main(void){
 			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
 		}
 		RN2483_Sleep(10000, receiveBuffer, BUFFERSIZE);
-		DelayMs(10020);
+
 	}
     /* Infinite loop */
     /*while (1) {
