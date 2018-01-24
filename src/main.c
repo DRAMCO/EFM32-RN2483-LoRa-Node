@@ -59,9 +59,8 @@ int main(void){
 	CHIP_Init();
 	InitDelay();
 
-	//CMU_ClockDivSet(cmuClock_HF, cmuClkDiv_2);       // Set HF clock divider to /2 to keep core frequency < 32MHz
-	//CMU_OscillatorEnable(cmuOsc_HFXO, true, true);   // Enable XTAL Osc and wait to stabilize
-	//CMU_ClockSelectSet(cmuClock_HF, cmuSelect_HFXO); // Select HF XTAL osc as system clock source. 48MHz XTAL, but we divided the system clock by 2, therefore our HF clock will be 24MHz
+	RTCDRV_Init();
+	RTCDRV_AllocateTimer(&xTimerForWakeUp);
 
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
@@ -117,9 +116,9 @@ int main(void){
 			payload[11] = '\0';
 			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
 		}
-		RN2483_Sleep(10000, receiveBuffer, BUFFERSIZE);
-		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 1000, NULL, NULL);
-		EMU_EnterEM2(true);
+		RN2483_Sleep(1000, receiveBuffer, BUFFERSIZE);
+		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 250, NULL, NULL);
+		EMU_EnterEM2(false);
 	}
     /* Infinite loop */
     /*while (1) {
