@@ -40,7 +40,6 @@ void RN2483_Init(){
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
 	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
 }
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac get deveui\r\n");

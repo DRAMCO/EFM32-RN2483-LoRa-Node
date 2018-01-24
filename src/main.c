@@ -15,12 +15,17 @@
  *
  ******************************************************************************/
 #include <usart.h>
+#include <stdlib.h>
 #include "em_device.h"
 #include "em_chip.h"
 #include "em_cmu.h"
+#include "em_emu.h"
 #include "em_gpio.h"
 #include "em_i2c.h"
 #include "em_usart.h"
+
+
+#include "rtcdriver.h"
 
 #include "i2cspm.h"
 
@@ -29,6 +34,9 @@
 #include "delay.h"
 
 #define BUFFERSIZE 50
+
+/** Timer used for bringing the system back to EM0. */
+RTCDRV_TimerID_t xTimerForWakeUp;
 
 int main(void){
 
@@ -110,7 +118,8 @@ int main(void){
 			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
 		}
 		RN2483_Sleep(10000, receiveBuffer, BUFFERSIZE);
-
+		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 1000, NULL, NULL);
+		EMU_EnterEM2(true);
 	}
     /* Infinite loop */
     /*while (1) {
