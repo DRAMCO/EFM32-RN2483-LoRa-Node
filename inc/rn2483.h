@@ -25,7 +25,7 @@
 #define TX_SUCCESS 1
 #define TX_SUCCESS_CONFIRMED 2
 
-void RN2483_Init();
+void RN2483_Init(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize);
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_GetSystemVersion(char * receiveBuffer, uint8_t bufferSize);

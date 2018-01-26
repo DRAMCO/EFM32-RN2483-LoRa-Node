@@ -34,8 +34,14 @@ char networkSessionKey[33];
 char applicationSessionKey[33];
 char deviceAddress[9];
 
-void RN2483_Init(){
+void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autobaud
+	USART0_ClearCondition(); 									// >936us low pulse
+	USART0_Setup(); 											// Setup serial
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
+	sprintf(commandBuffer, "U"); 							// Send 0x55
+	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
+	DelayMs(1000);
+	RN2483_GetSystemVersion(receiveBuffer, bufferSize);
 }
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);

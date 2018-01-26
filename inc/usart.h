@@ -19,6 +19,7 @@
 #define UART_RX_pin 11      // PE11
 
 void USART0_Setup();
+void USART0_ClearCondition();
 void USART0_SetupRXInt(char* receiveBuffer, int receiveBufferSize);
 void USART0_RX_IRQHandler(void);
 void USART0_SetupTXInt(char* transmitBuffer, int bytesToSend);

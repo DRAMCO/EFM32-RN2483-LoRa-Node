@@ -69,14 +69,8 @@ int main(void){
 	I2CSPM_Init(&i2cInit);
 	Bme280_Init(i2cInit.port);
 
-	USART0_Setup();
 
-	RN2483_Init();
-
-
-	GPIO_PinOutSet(gpioPortC, 2);
-
-
+	RN2483_Init(receiveBuffer, BUFFERSIZE);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);

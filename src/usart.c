@@ -42,7 +42,7 @@ void USART0_Setup()
 	{
 	  .enable       = usartDisable,   // Wait to enable the transmitter and receiver
 	  .refFreq      = 0,              // Setting refFreq to 0 will invoke the CMU_ClockFreqGet() function and measure the HFPER clock
-	  .baudrate     = 57600,         // Desired baud rate
+	  .baudrate     = 9600,         // Desired baud rate 57600
 	  .oversampling = usartOVS16,     // Set oversampling value to x16
 	  .databits     = usartDatabits8, // 8 data bits
 	  .parity       = usartNoParity,  // No parity bits
@@ -62,6 +62,11 @@ void USART0_Setup()
 	USART_Enable(USART0, usartEnable);     // Enable transmitter and receiver
 }
 
+void USART0_ClearCondition(){
+	GPIO_PinModeSet(COM_PORT, UART_TX_pin, gpioModePushPull, 0);
+	DelayMs(1);
+	GPIO_PinOutSet(COM_PORT, UART_TX_pin);
+}
 
 void USART0_SetupRXInt(char* receiveBuffer, int receiveBufferSize){
   USART_TypeDef *uart = USART0;
