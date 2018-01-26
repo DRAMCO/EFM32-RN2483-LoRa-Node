@@ -57,12 +57,13 @@ int main(void){
 
 	/* Chip errata */
 	CHIP_Init();
-	InitDelay();
+	//InitDelay();
+
+	CMU_ClockEnable(cmuClock_GPIO, true);
 
 	RTCDRV_Init();
 	RTCDRV_AllocateTimer(&xTimerForWakeUp);
 
-	CMU_ClockEnable(cmuClock_GPIO, true);
 	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
 
 	I2CSPM_Init(&i2cInit);
@@ -74,6 +75,8 @@ int main(void){
 
 
 	GPIO_PinOutSet(gpioPortC, 2);
+
+
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
@@ -103,12 +106,12 @@ int main(void){
 			payload[3] = (uint8_t)(tempLPP & 0x000000FF);
 
 			//Pressure
-			payload[4] = 0x02;
+			payload[4] = 0x01;
 			payload[5] = 0x68;
 			payload[6] = humidityLPP ;
 
 			//Pressure
-			payload[7] = 0x03;
+			payload[7] = 0x01;
 			payload[8] = 0x73;
 			payload[9] = (uint8_t)((pressureLPP & 0x0000FF00)>>8);
 			payload[10] = (uint8_t)(pressureLPP & 0x000000FF);
@@ -117,8 +120,9 @@ int main(void){
 			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
 		}
 		RN2483_Sleep(1000, receiveBuffer, BUFFERSIZE);
-		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 250, NULL, NULL);
-		EMU_EnterEM2(false);
+		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 1000, NULL, NULL);
+		EMU_EnterEM2(true);
+		//DelayMs(1000);
 	}
     /* Infinite loop */
     /*while (1) {

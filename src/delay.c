@@ -34,6 +34,7 @@
 #include "em_device.h"
 #include "em_timer.h"
 #include "em_cmu.h"
+#include "rtcdriver.h"
 
 #define RTC_FREQ 32768
 #define TIMER_FREQ 48000000
@@ -53,14 +54,15 @@ void InitDelay(void){
  * Delay a number of milliseconds
  **********************************************************/
 void DelayMs(int ms){
-  uint32_t endValue = ms * RTC_FREQ / 1000;
+  /*uint32_t endValue = ms * RTC_FREQ / 1000;
   RTC->CNT = 0;
 
   RTC->CTRL |= RTC_CTRL_EN;
 
   while ( RTC->CNT < endValue );
 
-  RTC->CTRL &= ~RTC_CTRL_EN;
+  RTC->CTRL &= ~RTC_CTRL_EN;*/
+	RTCDRV_Delay(ms);
 }
 
 /**********************************************************
