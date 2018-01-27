@@ -22,8 +22,8 @@
 #include "em_emu.h"
 #include "em_gpio.h"
 #include "em_i2c.h"
-#include "em_usart.h"
-
+//#include "em_usart.h"
+#include "leuart.h"
 
 #include "rtcdriver.h"
 
@@ -69,8 +69,21 @@ int main(void){
 	I2CSPM_Init(&i2cInit);
 	Bme280_Init(i2cInit.port);
 
+	char commandBuffer[50];
+	setupDmaTx();
+	Leuart_ClearCondition();
+	setupLeuart();
+	//setupDmaRx();
 
-	RN2483_Init(receiveBuffer, BUFFERSIZE);
+	sprintf(commandBuffer, "U");
+	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+	DelayMs(20);
+	while(1){
+		sprintf(commandBuffer, "sys get ver\r\n");
+		sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+		DelayMs(1000);
+	}
+	/*RN2483_Init(receiveBuffer, BUFFERSIZE);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
@@ -117,19 +130,6 @@ int main(void){
 		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 1000, NULL, NULL);
 		EMU_EnterEM2(true);
 		//DelayMs(1000);
-	}
-    /* Infinite loop */
-    /*while (1) {
+	}*/
 
-
-    	int32_t pressure;
-    	Bme280_ReadPressure(i2cInit.port, &pressure);
-
-    	int32_t humidity;
-    	Bme280_ReadHumidity(i2cInit.port, &humidity);
-
-    	DelayMs(500);
-    	//Bme280_ReadTemperature(&i2cInit, &temperature);
-
-    }*/
 }
