@@ -70,9 +70,11 @@ int main(void){
 	Bme280_Init(i2cInit.port);
 
 	char commandBuffer[50];
-	setupDmaTx();
 	Leuart_ClearCondition();
 	setupLeuart();
+	setupDmaTx();
+	//
+
 	//setupDmaRx();
 
 	sprintf(commandBuffer, "U");

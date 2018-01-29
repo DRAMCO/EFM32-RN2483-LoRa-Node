@@ -120,6 +120,13 @@ void setupDmaTx(void)
 
   /* Configure primary descriptor */
   DMA_CfgDescr(DMA_CHANNEL_TX, true, &descrCfg);
+
+  /*sprintf(commandBuffer, "U");
+  sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+  DelayMs(20);
+  sprintf(commandBuffer, "sys get ver\r\n");
+  uint8_t length = strlen(commandBuffer);
+  sendLeuartData(commandBuffer, length);*/
 }
 void sendLeuartData(char * buffer, uint8_t bufferLength){
 	  while(DMA_ChannelEnabled(DMA_CHANNEL_TX));
@@ -216,7 +223,6 @@ void setupLeuart(void)
   /* Clear previous RX interrupts */
   LEUART_IntClear(LEUART0, LEUART_IF_RXDATAV);
   NVIC_ClearPendingIRQ(LEUART0_IRQn);
-
 
   /* Finally enable it */
   LEUART_Enable(LEUART0, leuartEnable);
