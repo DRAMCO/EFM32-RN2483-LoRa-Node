@@ -17,6 +17,7 @@
 #include "usart.h"
 #include "delay.h"
 
+
 /* Buffer pointers and indexes */
 char* txBuffer;
 char* rxBuffer;

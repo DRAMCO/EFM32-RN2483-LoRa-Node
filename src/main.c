@@ -70,12 +70,11 @@ int main(void){
 	Bme280_Init(i2cInit.port);
 
 	char commandBuffer[50];
-	Leuart_ClearCondition();
+	setupDma();
+	Leuart_BreakCondition();
 	setupLeuart();
-	setupDmaTx();
-	//
-
 	//setupDmaRx();
+
 
 	sprintf(commandBuffer, "U");
 	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
@@ -83,6 +82,12 @@ int main(void){
 	while(1){
 		sprintf(commandBuffer, "sys get ver\r\n");
 		sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+		DelayMs(70);
+		if(Leuart_ResponseAvailable()){
+			char test[50];
+			Leuart_ReadResponse(test, 50);
+			uint8_t d = 4;
+		}
 		DelayMs(1000);
 	}
 	/*RN2483_Init(receiveBuffer, BUFFERSIZE);
