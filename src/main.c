@@ -80,15 +80,22 @@ int main(void){
 	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
 	DelayMs(20);
 	while(1){
-		sprintf(commandBuffer, "sys get ver\r\n");
-		sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+
+		/*sprintf(commandBuffer, "sys get ver\r\n");
+		char test[50];
+		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), test, 50);*/
+		char test[50];
+		RN2483_GetHardwareEUI(test, 50);
+		DelayMs(1000);
+
+		/*sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
 		DelayMs(70);
 		if(Leuart_ResponseAvailable()){
 			char test[50];
 			Leuart_ReadResponse(test, 50);
 			uint8_t d = 4;
 		}
-		DelayMs(1000);
+		DelayMs(1000);*/
 	}
 	/*RN2483_Init(receiveBuffer, BUFFERSIZE);
 

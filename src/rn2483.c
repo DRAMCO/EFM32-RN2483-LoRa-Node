@@ -17,6 +17,7 @@
 #include "em_gpio.h"
 #include "em_usart.h"
 
+#include "leuart.h"
 #include "usart.h"
 #include "delay.h"
 #include "util.h"
@@ -49,9 +50,8 @@ void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 }
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac get deveui\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
-}
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
+}/*
 void RN2483_GetSystemVersion(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys get ver\r\n");
 	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
@@ -309,4 +309,4 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 		}
 	}
 	return TX_FAIL;
-}
+}*/

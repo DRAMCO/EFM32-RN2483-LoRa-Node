@@ -13,8 +13,7 @@
 
 static void basicTxComplete(unsigned int channel, bool primary, void *user);
 static void basicRxComplete(unsigned int channel, bool primary, void *user);
-void setupDmaRx(void);
-void setupDmaTx(void);
+void setupDma(void);
 void setupLeuart(void);
 void sendLeuartData(char * buffer, uint8_t bufferLength);
 void Leuart_BreakCondition();
