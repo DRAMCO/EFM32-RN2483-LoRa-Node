@@ -36,45 +36,18 @@
 #include "em_cmu.h"
 #include "rtcdriver.h"
 
-#define RTC_FREQ 32768
-#define TIMER_FREQ 48000000
+RTCDRV_TimerID_t xTimerForWakeUp;
 
-/**********************************************************
- * Enables clocks used for delay functions.
- **********************************************************/
-void InitDelay(void){
-  CMU_ClockEnable(cmuClock_CORELE, true);
-  CMU_ClockSelectSet(cmuClock_LFA, cmuSelect_LFRCO);
-  CMU_ClockEnable(cmuClock_RTC, true);
-  CMU_ClockEnable(cmuClock_TIMER0, true);
+void InitDelay(){
+	RTCDRV_Init();
+	RTCDRV_AllocateTimer(&xTimerForWakeUp);
 }
-
-
 /**********************************************************
  * Delay a number of milliseconds
  **********************************************************/
 void DelayMs(int ms){
-  /*uint32_t endValue = ms * RTC_FREQ / 1000;
-  RTC->CNT = 0;
-
-  RTC->CTRL |= RTC_CTRL_EN;
-
-  while ( RTC->CNT < endValue );
-
-  RTC->CTRL &= ~RTC_CTRL_EN;*/
-	RTCDRV_Delay(ms);
+	RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, ms, NULL, NULL);
+	EMU_EnterEM2(true);
 }
 
-/**********************************************************
- * Delay a number of microseconds
- **********************************************************/
-void DelayUs(int us){
-  uint32_t endValue = us * (TIMER_FREQ / 1000000);
-  TIMER0->CNT = 0;
 
-  TIMER0->CMD = TIMER_CMD_START;
-
-  while ( TIMER0->CNT < endValue );
-
-  TIMER0->CMD = TIMER_CMD_STOP;
-}

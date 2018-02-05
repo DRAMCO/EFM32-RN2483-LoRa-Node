@@ -14,7 +14,6 @@
  * terms of that agreement.
  *
  ******************************************************************************/
-#include <usart.h>
 #include <stdlib.h>
 #include "em_device.h"
 #include "em_chip.h"
@@ -22,7 +21,6 @@
 #include "em_emu.h"
 #include "em_gpio.h"
 #include "em_i2c.h"
-//#include "em_usart.h"
 #include "leuart.h"
 
 #include "rtcdriver.h"
@@ -36,7 +34,7 @@
 #define BUFFERSIZE 50
 
 /** Timer used for bringing the system back to EM0. */
-RTCDRV_TimerID_t xTimerForWakeUp;
+
 
 int main(void){
 
@@ -45,9 +43,9 @@ int main(void){
 	char receiveBuffer[BUFFERSIZE];
 	memset(receiveBuffer, '\0', BUFFERSIZE);
 
-	char deviceEUI[] = "0053AC923819B937";
+	char deviceEUI[] = "00E6457CE8B52C56";
 	char applicationEUI[] = "70B3D57ED00096E2";
-	char applicationKey[] = "7C8E68C713058981EDA0AB6A27739D68";
+	char applicationKey[] = "B01931C73C3BEA2CC754343AFF3B1962";
 
 	/*
 	char deviceAddress[] = "26011DB5";
@@ -57,36 +55,27 @@ int main(void){
 
 	/* Chip errata */
 	CHIP_Init();
-	//InitDelay();
-
 	CMU_ClockEnable(cmuClock_GPIO, true);
 
-	RTCDRV_Init();
-	RTCDRV_AllocateTimer(&xTimerForWakeUp);
-
-	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
-
+	InitDelay();
 	I2CSPM_Init(&i2cInit);
 	Bme280_Init(i2cInit.port);
 
-	char commandBuffer[50];
-	setupDma();
-	Leuart_BreakCondition();
-	setupLeuart();
-	//setupDmaRx();
+	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
+	/*DelayMs(20);
+	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 1);*/
 
+	RN2483_Init(receiveBuffer, BUFFERSIZE);
 
-	sprintf(commandBuffer, "U");
-	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
-	DelayMs(20);
-	while(1){
+	//while(1){
 
 		/*sprintf(commandBuffer, "sys get ver\r\n");
 		char test[50];
 		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), test, 50);*/
-		char test[50];
-		RN2483_GetHardwareEUI(test, 50);
-		DelayMs(1000);
+
+		//RN2483_GetHardwareEUI(receiveBuffer, BUFFERSIZE);
+		//RN2483_Sleep(1000, receiveBuffer, BUFFERSIZE);
+
 
 		/*sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
 		DelayMs(70);
@@ -96,8 +85,8 @@ int main(void){
 			uint8_t d = 4;
 		}
 		DelayMs(1000);*/
-	}
-	/*RN2483_Init(receiveBuffer, BUFFERSIZE);
+	//}
+	//RN2483_Init(receiveBuffer, BUFFERSIZE);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
@@ -126,13 +115,13 @@ int main(void){
 			payload[2] = (uint8_t)((tempLPP & 0x0000FF00)>>8);
 			payload[3] = (uint8_t)(tempLPP & 0x000000FF);
 
-			//Pressure
-			payload[4] = 0x01;
+			//Humidity
+			payload[4] = 0x02;
 			payload[5] = 0x68;
 			payload[6] = humidityLPP ;
 
 			//Pressure
-			payload[7] = 0x01;
+			payload[7] = 0x03;
 			payload[8] = 0x73;
 			payload[9] = (uint8_t)((pressureLPP & 0x0000FF00)>>8);
 			payload[10] = (uint8_t)(pressureLPP & 0x000000FF);
@@ -140,10 +129,8 @@ int main(void){
 			payload[11] = '\0';
 			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
 		}
-		RN2483_Sleep(1000, receiveBuffer, BUFFERSIZE);
-		RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, 1000, NULL, NULL);
-		EMU_EnterEM2(true);
+		RN2483_Sleep(10000, receiveBuffer, BUFFERSIZE);
 		//DelayMs(1000);
-	}*/
+	}
 
 }

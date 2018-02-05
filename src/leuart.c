@@ -160,7 +160,7 @@ void setupLeuart(void){
   CMU_ClockEnable(cmuClock_CORELE, true);
 
   /* Select LFRCO for LEUARTs (and wait for it to stabilize) */
-  CMU_ClockSelectSet(cmuClock_LFB, cmuSelect_LFRCO);
+  CMU_ClockSelectSet(cmuClock_LFB, cmuSelect_LFXO);
   CMU_ClockEnable(cmuClock_LEUART0, true);
 
   /* Do not prescale clock */
@@ -199,6 +199,18 @@ void Leuart_ReadResponse(char * buffer, uint8_t bufferLength){
 }
 void Leuart_SendCommand(char * cb, uint8_t cbl, char * rb, uint8_t rbl){
 	sendLeuartData(cb, cbl);
+	while(!Leuart_ResponseAvailable()){
+		EMU_EnterEM2(true);
+	}
+	Leuart_ReadResponse(rb, rbl);
+}
+void Leuart_WaitForResponse(char * rb, uint8_t rbl){
+	DMA_ActivateBasic(	DMA_CHANNEL_RX,
+						true,
+						false,
+						(void *)&receiveBuffer,
+						(void *)&LEUART0->RXDATA,
+						0);
 	while(!Leuart_ResponseAvailable()){
 		EMU_EnterEM2(true);
 	}

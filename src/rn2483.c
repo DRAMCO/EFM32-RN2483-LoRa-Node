@@ -18,7 +18,6 @@
 #include "em_usart.h"
 
 #include "leuart.h"
-#include "usart.h"
 #include "delay.h"
 #include "util.h"
 
@@ -36,36 +35,36 @@ char applicationSessionKey[33];
 char deviceAddress[9];
 
 void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autobaud
-	USART0_ClearCondition(); 									// >936us low pulse
-	USART0_Setup(); 											// Setup serial
+
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
-	sprintf(commandBuffer, "U"); 							// Send 0x55
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	DelayMs(1000);
-	RN2483_GetSystemVersion(receiveBuffer, bufferSize);
+
+	setupDma();
+	Leuart_BreakCondition();
+	setupLeuart();
+
+	sprintf(commandBuffer, "U");
+	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+	DelayMs(20);
 }
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac get deveui\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
-}/*
+}
 void RN2483_GetSystemVersion(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys get ver\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_GetApplicationEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys get appeui\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac reset 868\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
@@ -73,8 +72,7 @@ void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 		deviceEUI[16] = '\0';
 	}
 	sprintf(commandBuffer, "mac set deveui %s\r\n", deviceEUI);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetApplicationEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
@@ -82,8 +80,7 @@ void RN2483_SetApplicationEUI(char * eui, char * receiveBuffer, uint8_t bufferSi
 		applicationEUI[16] = '\0';
 	}
 	sprintf(commandBuffer, "mac set appeui %s\r\n", applicationEUI);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetApplicationKey(char * key, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(key) == 32){
@@ -91,8 +88,7 @@ void RN2483_SetApplicationKey(char * key, char * receiveBuffer, uint8_t bufferSi
 		applicationKey[32] = '\0';
 	}
 	sprintf(commandBuffer, "mac set appkey %s\r\n", applicationKey);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetApplicationSessionKey(char * skey, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(skey) == 32){
@@ -100,8 +96,7 @@ void RN2483_SetApplicationSessionKey(char * skey, char * receiveBuffer, uint8_t 
 		applicationKey[32] = '\0';
 	}
 	sprintf(commandBuffer, "mac set appskey %s\r\n", applicationSessionKey);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 
 void RN2483_SetNetworkSessionKey(char * key, char * receiveBuffer, uint8_t bufferSize){
@@ -110,8 +105,7 @@ void RN2483_SetNetworkSessionKey(char * key, char * receiveBuffer, uint8_t buffe
 		networkSessionKey[32] = '\0';
 	}
 	sprintf(commandBuffer, "mac set nwkskey %s\r\n", networkSessionKey);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetDeviceAddress(char * address, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(address) == 8){
@@ -119,57 +113,48 @@ void RN2483_SetDeviceAddress(char * address, char * receiveBuffer, uint8_t buffe
 		deviceAddress[8] = '\0';
 	}
 	sprintf(commandBuffer, "mac set devaddr %s\r\n", deviceAddress);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetOutputPower(uint8_t pwr, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set pwridx %i\r\n", pwr);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_DisableAdaptiveDataRate(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set adr off\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_DisableAutomaticReplies(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set ar off\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetDataRate(uint8_t dr, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set dr %i\r\n", dr);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_EnableAdaptiveDataRate(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set adr on\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SetBatteryLevel(uint8_t battery, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set bat %i\r\n", battery);
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 void RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac save\r\n");
-	USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-	USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
 bool RN2483_JoinOTAA(char * receiveBuffer, uint8_t bufferSize){
 	otaa = true;
 	bool joined = false;
 	for(int i=0; i<10 && !joined; i++){
 		sprintf(commandBuffer, "mac join otaa\r\n");
-		USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-		USART0_ReceiveBuffer(receiveBuffer, bufferSize); // Receive command response
-		USART0_ReceiveBuffer(receiveBuffer, bufferSize); // Receive accepted
+		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);// Receive command response
+		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
 			joined = true;
-			DelayMs(500);
+			DelayMs(50);
 		}else{
-			DelayMs(500);
+			DelayMs(50);
 		}
 	}
 	return joined;
@@ -179,14 +164,13 @@ bool RN2483_JoinABP(char * receiveBuffer, uint8_t bufferSize){
 	bool joined = false;
 	for(int i=0; i<10 && !joined; i++){
 		sprintf(commandBuffer, "mac join abp\r\n");
-		USART0_SendBuffer(commandBuffer, strlen(commandBuffer));
-		USART0_ReceiveBuffer(receiveBuffer, bufferSize); // Receive command response
-		USART0_ReceiveBuffer(receiveBuffer, bufferSize); // Receive accepted
+		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize); // Receive command response
+		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
 			joined = true;
-			DelayMs(500);
+			DelayMs(50);
 		}else{
-			DelayMs(500);
+			DelayMs(50);
 		}
 	}
 	return joined;
@@ -213,8 +197,9 @@ bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiv
 	RN2483_SetOutputPower(RN2483_POWER_14DBM, receiveBuffer, bufferSize);
 	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize);
 	RN2483_DisableAutomaticReplies(receiveBuffer, bufferSize);
-	RN2483_SetDataRate(5, receiveBuffer, bufferSize);
 	RN2483_EnableAdaptiveDataRate(receiveBuffer, bufferSize);
+	//uint8_t dataRate = rand()%5;
+	RN2483_SetDataRate(5, receiveBuffer, bufferSize);
 	RN2483_SetBatteryLevel(150, receiveBuffer, bufferSize);
 	RN2483_SaveMac(receiveBuffer, bufferSize);
 	bool joined = RN2483_JoinOTAA(receiveBuffer, bufferSize);
@@ -256,13 +241,12 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 
 	while(!sendDone){
 		retryCounter ++;
-		if(retryCounter > 10){
+		if(retryCounter > 30){
 			return TX_FAIL;
 		}
-		USART0_SendBuffer(commandBuffer, commandSize);
-		USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 		if(StringStartsWith(receiveBuffer, "ok")){
-			USART0_ReceiveBuffer(receiveBuffer, bufferSize);
+			Leuart_WaitForResponse(receiveBuffer, bufferSize);
 			if(StringStartsWith(receiveBuffer, "mac_tx_ok")){
 				sendDone = true;
 				return TX_SUCCESS;
@@ -309,4 +293,4 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 		}
 	}
 	return TX_FAIL;
-}*/
+}

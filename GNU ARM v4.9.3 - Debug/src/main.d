@@ -1,5 +1,4 @@
 src/main.o: ../src/main.c \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/usart.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg322f64.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\cmsis\include\arm_math.h \
@@ -52,7 +51,6 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_assert.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_cmu.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_i2c.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/leuart.h \
@@ -63,9 +61,8 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\slstk3400a_efm32hg\config\i2cspmconfig.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/usart.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h:
 
@@ -171,8 +168,6 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h:
-
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_i2c.h:
@@ -192,5 +187,7 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h:
 
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h:
+
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h:
 
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h:

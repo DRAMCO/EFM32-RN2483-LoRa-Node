@@ -34,8 +34,7 @@
 #ifndef _DELAY_H_
 #define _DELAY_H_
 
-void InitDelay(void);
+void InitDelay();
 void DelayMs(int ms);
-void DelayUs(int us);
 
 #endif
