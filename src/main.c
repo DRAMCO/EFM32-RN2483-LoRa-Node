@@ -21,6 +21,7 @@
 #include "em_emu.h"
 #include "em_gpio.h"
 #include "em_i2c.h"
+#include "em_adc.h"
 #include "leuart.h"
 
 #include "rtcdriver.h"
@@ -29,12 +30,10 @@
 
 #include "bme280.h"
 #include "rn2483.h"
+#include "battery.h"
 #include "delay.h"
 
 #define BUFFERSIZE 50
-
-/** Timer used for bringing the system back to EM0. */
-
 
 int main(void){
 
@@ -46,6 +45,8 @@ int main(void){
 	char deviceEUI[] = "00E6457CE8B52C56";
 	char applicationEUI[] = "70B3D57ED00096E2";
 	char applicationKey[] = "B01931C73C3BEA2CC754343AFF3B1962";
+
+	uint8_t messageCounter = 0;
 
 	/*
 	char deviceAddress[] = "26011DB5";
@@ -61,32 +62,9 @@ int main(void){
 	I2CSPM_Init(&i2cInit);
 	Bme280_Init(i2cInit.port);
 
-	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
-	/*DelayMs(20);
-	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 1);*/
+	adcInit();
 
 	RN2483_Init(receiveBuffer, BUFFERSIZE);
-
-	//while(1){
-
-		/*sprintf(commandBuffer, "sys get ver\r\n");
-		char test[50];
-		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), test, 50);*/
-
-		//RN2483_GetHardwareEUI(receiveBuffer, BUFFERSIZE);
-		//RN2483_Sleep(1000, receiveBuffer, BUFFERSIZE);
-
-
-		/*sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
-		DelayMs(70);
-		if(Leuart_ResponseAvailable()){
-			char test[50];
-			Leuart_ReadResponse(test, 50);
-			uint8_t d = 4;
-		}
-		DelayMs(1000);*/
-	//}
-	//RN2483_Init(receiveBuffer, BUFFERSIZE);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
@@ -104,7 +82,9 @@ int main(void){
 
 		int32_t humidity;
 		Bme280_ReadHumidity(i2cInit.port, &humidity);
-		uint8_t humidityLPP = (int8_t) humidity*2;
+		uint8_t humidityLPP = (int8_t) (humidity*2/10);
+
+		uint32_t battery = checkBattery()*0.09765625; // 1.25/4096*100/0.3125
 
 		if(joined){
 			char payload[13];
@@ -127,10 +107,22 @@ int main(void){
 			payload[10] = (uint8_t)(pressureLPP & 0x000000FF);
 
 			payload[11] = '\0';
-			RN2483_TransmitUnconfirmed(payload, 22, receiveBuffer, BUFFERSIZE);
+
+			uint8_t payloadSize = 22;
+			if(messageCounter == 0){
+				payload[11] = 0x04;
+				payload[12] = 0x02;
+				payload[13] = (uint8_t)((battery & 0x0000FF00)>>8);
+				payload[14] = (uint8_t)(battery & 0x000000FF);
+				payload[15] = '\0';
+				payloadSize = 30;
+			}
+
+			RN2483_TransmitUnconfirmed(payload, payloadSize, receiveBuffer, BUFFERSIZE);
+
+			messageCounter = (messageCounter + 1)%10;
 		}
-		RN2483_Sleep(10000, receiveBuffer, BUFFERSIZE);
-		//DelayMs(1000);
+		RN2483_Sleep(1800000, receiveBuffer, BUFFERSIZE);
 	}
 
 }

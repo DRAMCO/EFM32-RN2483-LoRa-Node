@@ -306,7 +306,7 @@ int32_t Bme280_ReadHumidity(I2C_TypeDef *i2c, int32_t *hum){
 	v_x1_u32r = (v_x1_u32r < 0) ? 0 : v_x1_u32r;
 	v_x1_u32r = (v_x1_u32r > 419430400) ? 419430400 : v_x1_u32r;
 	int32_t h = (v_x1_u32r>>12);
-	*hum =  h / 1024.0;
+	*hum =  h / 102.40;
 
 	return 0;
 }

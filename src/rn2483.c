@@ -35,6 +35,10 @@ char applicationSessionKey[33];
 char deviceAddress[9];
 
 void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autobaud
+	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
+	DelayMs(5);
+	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 1);
+	DelayMs(250);
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
 
@@ -131,6 +135,15 @@ void RN2483_SetDataRate(uint8_t dr, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set dr %i\r\n", dr);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+int8_t RN2483_GetDataRate(char * receiveBuffer, uint8_t bufferSize){
+	sprintf(commandBuffer, "mac get dr\r\n");
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
+	int8_t dr = receiveBuffer[0]-48;
+	if(dr >= 0 && dr <= 7)
+		return dr;
+	else
+		return -1;
+}
 void RN2483_EnableAdaptiveDataRate(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set adr on\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
@@ -198,8 +211,8 @@ bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiv
 	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize);
 	RN2483_DisableAutomaticReplies(receiveBuffer, bufferSize);
 	RN2483_EnableAdaptiveDataRate(receiveBuffer, bufferSize);
-	//uint8_t dataRate = rand()%5;
-	RN2483_SetDataRate(5, receiveBuffer, bufferSize);
+	uint8_t dataRate = rand()%5;
+	RN2483_SetDataRate(dataRate, receiveBuffer, bufferSize);
 	RN2483_SetBatteryLevel(150, receiveBuffer, bufferSize);
 	RN2483_SaveMac(receiveBuffer, bufferSize);
 	bool joined = RN2483_JoinOTAA(receiveBuffer, bufferSize);
