@@ -207,7 +207,7 @@ bool Bme280_Init(I2C_TypeDef *i2c){
 }
 
 int32_t Bme280_TakeForcedMeasurement(I2C_TypeDef *i2c){
-	Bme280_Write8(i2c, BME280_REG_CTRL_MEAS, BME280_OVERSAMPLING1 << 5 | BME280_OVERSAMPLING1 << 2 | BME280_FORCEDMODE);
+	Bme280_Write8(i2c, BME280_REG_CTRL_MEAS, BME280_OVERSAMPLING1 << 5 | BME280_OVERSAMPLING4 << 2 | BME280_FORCEDMODE);
 
 	uint8_t data = 0;
 	do{
@@ -276,7 +276,7 @@ int32_t Bme280_ReadPressure(I2C_TypeDef *i2c, int32_t *pres){
 
 	p = ((p + var1 + var2) >> 8) + (((int64_t)bme280_calib.dig_P7)<<4);
 
-	*pres = p/256;
+	*pres = (int32_t) (p/256.0);
 	return 0;
 }
 

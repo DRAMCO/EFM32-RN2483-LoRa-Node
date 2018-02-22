@@ -37,6 +37,7 @@
 
 int main(void){
 
+
 	I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
 
 	char receiveBuffer[BUFFERSIZE];
@@ -57,14 +58,18 @@ int main(void){
 	/* Chip errata */
 	CHIP_Init();
 	CMU_ClockEnable(cmuClock_GPIO, true);
-
 	InitDelay();
+
+	DelayMs(500);
+
 	I2CSPM_Init(&i2cInit);
 	Bme280_Init(i2cInit.port);
 
 	adcInit();
 
 	RN2483_Init(receiveBuffer, BUFFERSIZE);
+
+	DelayMs(1000);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
@@ -87,7 +92,7 @@ int main(void){
 		uint32_t battery = checkBattery()*0.09765625; // 1.25/4096*100/0.3125
 
 		if(joined){
-			char payload[13];
+			char payload[16];
 
 			// Temperature
 			payload[0] = 0x01;

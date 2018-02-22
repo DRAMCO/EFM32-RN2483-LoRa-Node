@@ -35,9 +35,9 @@ char applicationSessionKey[33];
 char deviceAddress[9];
 
 void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autobaud
-	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 0);
-	DelayMs(5);
-	GPIO_PinModeSet(gpioPortC, 2, gpioModePushPull, 1);
+	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
+	DelayMs(20);
+	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
 	DelayMs(250);
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
@@ -69,6 +69,7 @@ void RN2483_GetApplicationEUI(char * receiveBuffer, uint8_t bufferSize){
 void RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac reset 868\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
+	//Leuart_SendCommand(commandBuffer, 10, receiveBuffer, bufferSize);
 }
 void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
@@ -165,9 +166,9 @@ bool RN2483_JoinOTAA(char * receiveBuffer, uint8_t bufferSize){
 		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
 			joined = true;
-			DelayMs(50);
+			DelayMs(100);
 		}else{
-			DelayMs(50);
+			DelayMs(5000);
 		}
 	}
 	return joined;

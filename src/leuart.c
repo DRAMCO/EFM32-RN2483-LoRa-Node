@@ -48,6 +48,7 @@ static void basicTxComplete(unsigned int channel, bool primary, void *user){
 					(void *)&LEUART0->RXDATA,
                     0);
 }
+
 static void basicRxComplete(unsigned int channel, bool primary, void *user){
 	(void) user;
 
@@ -137,13 +138,17 @@ void setupDma(void){
 	DMA_CfgDescr(DMA_CHANNEL_TX, true, &txDescrCfg);
 }
 void sendLeuartData(char * buffer, uint8_t bufferLength){
-	  while(DMA_ChannelEnabled(DMA_CHANNEL_TX)); // EnterEM1
-	  DMA_ActivateBasic(DMA_CHANNEL_TX,
-	                    true,
-	                    false,
-	                    (void *)&LEUART0->TXDATA,
-	                    buffer,
-	                    (unsigned int)(bufferLength - 1));
+	// Wait for sync
+	while (LEUART0->SYNCBUSY);
+
+	DMA_ActivateBasic(DMA_CHANNEL_TX,
+	                  true,
+	                  false,
+	                  (void *)&LEUART0->TXDATA,
+	                  buffer,
+	                  (unsigned int)(bufferLength - 1));
+
+	 while(DMA_ChannelEnabled(DMA_CHANNEL_TX)); // EnterEM
 }
 void setupLeuart(void){
   /* Enable peripheral clocks */
@@ -185,6 +190,8 @@ void setupLeuart(void){
   LEUART_Enable(LEUART0, leuartEnable);
 }
 void Leuart_BreakCondition(){
+	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
+	DelayMs(20);
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 0);
 	DelayMs(20);
 	GPIO_PinOutSet(LEUART_TXPORT, LEUART_TXPIN);
