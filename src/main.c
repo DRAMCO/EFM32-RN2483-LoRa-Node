@@ -29,6 +29,7 @@
 #include "i2cspm.h"
 
 #include "bme280.h"
+#include "lis3dh.h"
 #include "rn2483.h"
 #include "battery.h"
 #include "delay.h"
@@ -43,9 +44,14 @@ int main(void){
 	char receiveBuffer[BUFFERSIZE];
 	memset(receiveBuffer, '\0', BUFFERSIZE);
 
-	char deviceEUI[] = "00E6457CE8B52C56";
+	/*char deviceEUI[] = "00E6457CE8B52C56";
 	char applicationEUI[] = "70B3D57ED00096E2";
 	char applicationKey[] = "B01931C73C3BEA2CC754343AFF3B1962";
+	*/
+
+	char deviceEUI[] = "0080DD42184A0A0B";
+	char applicationEUI[] = "70B3D57ED000A7C6";
+	char applicationKey[] = "5B115E6BAD1144DDCDA486BEC896A2CB";
 
 	uint8_t messageCounter = 0;
 
@@ -63,13 +69,29 @@ int main(void){
 	DelayMs(500);
 
 	I2CSPM_Init(&i2cInit);
+
+	//GPIO_PinModeSet(gpioPortE, 10, gpioModePushPull, 1);
+	//GPIO_PinModeSet(gpioPortE, 11, gpioModePushPull, 0);
+
+	/*Lis3dh_Init(i2cInit.port);
+
+	uint8_t id = Lis3dh_ReadWhoAmI(i2cInit.port);
+
+
+	uint16_t x = 0;
+	uint16_t y = 0;
+	uint16_t z = 0;
+
+	Lis3dh_ReadValues(i2cInit.port, &x, &y, &z);
+	uint8_t blabla = 0;*/
 	Bme280_Init(i2cInit.port);
+
 
 	adcInit();
 
 	RN2483_Init(receiveBuffer, BUFFERSIZE);
 
-	DelayMs(1000);
+	DelayMs(500);
 
 	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);

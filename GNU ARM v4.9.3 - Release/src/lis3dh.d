@@ -1,4 +1,7 @@
-src/main.o: ../src/main.c \
+src/lis3dh.o: ../src/lis3dh.c \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\common\drivers\i2cspm.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\slstk3400a_efm32hg\config\i2cspmconfig.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg322f64.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\cmsis\include\arm_math.h \
@@ -44,28 +47,17 @@ src/main.o: ../src/main.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_dmactrl.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_ports.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_pins.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_chip.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_system.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_bus.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_assert.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_cmu.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_i2c.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_adc.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/leuart.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\rtcdrv\inc\rtcdriver.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\common\inc\ecode.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\rtcdrv\config\rtcdrv_config.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\common\drivers\i2cspm.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\slstk3400a_efm32hg\config\i2cspmconfig.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/lis3dh.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/battery.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h
+
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\common\drivers\i2cspm.h:
+
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\slstk3400a_efm32hg\config\i2cspmconfig.h:
+
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h:
 
@@ -157,46 +149,12 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_pins.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_chip.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_system.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h:
-
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_bus.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_assert.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_cmu.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h:
-
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_i2c.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_adc.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/leuart.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\rtcdrv\inc\rtcdriver.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\common\inc\ecode.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emdrv\rtcdrv\config\rtcdrv_config.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\common\drivers\i2cspm.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\hardware\kit\slstk3400a_efm32hg\config\i2cspmconfig.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/bme280.h:
-
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/lis3dh.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/battery.h:
 
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h:

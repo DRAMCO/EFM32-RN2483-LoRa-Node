@@ -38,7 +38,7 @@ int32_t Bme280_Read8(I2C_TypeDef *i2c, uint8_t reg_addr, uint8_t *data){
 int32_t Bme280_Read16(I2C_TypeDef *i2c, uint8_t reg_addr, uint16_t *data){
   I2C_TransferSeq_TypeDef    seq;
   I2C_TransferReturn_TypeDef ret;
-  uint8_t                    i2c_read_data[1];
+  uint8_t                    i2c_read_data[2];
   uint8_t                    i2c_write_data[1];
 
   seq.addr  = BME280_ADDR<<1;
@@ -135,7 +135,7 @@ int32_t Bme280_ReadCoefficients(I2C_TypeDef *i2c){
 	seq.buf[0].len    = 1;
 	/* Select location/length of data to be read */
 	seq.buf[1].data = Bme280_CalibrationRegisters1;
-	seq.buf[1].len  = 24;
+	seq.buf[1].len  = 25;
 
 	ret = I2CSPM_Transfer(i2c, &seq);
 	if (ret != i2cTransferDone){
@@ -169,12 +169,12 @@ int32_t Bme280_ReadCoefficients(I2C_TypeDef *i2c){
 	bme280_calib.dig_P8 = (int16_t) (Bme280_CalibrationRegisters1[21] << 8 | Bme280_CalibrationRegisters1[20]);
 	bme280_calib.dig_P9 = (int16_t) (Bme280_CalibrationRegisters1[23] << 8 | Bme280_CalibrationRegisters1[22]);
 
-	bme280_calib.dig_H1 = (uint8_t) (Bme280_CalibrationRegisters1[25]);
+	bme280_calib.dig_H1 = (uint8_t) (Bme280_CalibrationRegisters1[24]);
 	bme280_calib.dig_H2 = (int16_t) (Bme280_CalibrationRegisters2[1] << 8 | Bme280_CalibrationRegisters2[0]);
 	bme280_calib.dig_H3 = (uint8_t) (Bme280_CalibrationRegisters2[2]);
 	bme280_calib.dig_H4 = (int16_t) ((Bme280_CalibrationRegisters2[3] << 4) | (Bme280_CalibrationRegisters2[5] & 0xF));
 	bme280_calib.dig_H5 = (int16_t) (Bme280_CalibrationRegisters2[6] << 4 | Bme280_CalibrationRegisters2[5] >> 4);
-	bme280_calib.dig_H6 = (uint8_t) (Bme280_CalibrationRegisters2[7]);
+	bme280_calib.dig_H6 = (int8_t) (Bme280_CalibrationRegisters2[7]);
 
 	return (uint32_t) 0;
 }
@@ -218,10 +218,11 @@ int32_t Bme280_TakeForcedMeasurement(I2C_TypeDef *i2c){
 	return 0;
 }
 
-int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp){
+int32_t Bme280_ReadTemperatureFine(I2C_TypeDef *i2c, int32_t *t_fine){
 	int32_t var1, var2;
-	uint32_t adc_T;
-	Bme280_Read24(i2c, BME280_REG_TEMPDATA, &adc_T);
+	uint32_t adc_UT = 0;
+	Bme280_Read24(i2c, BME280_REG_TEMPDATA, &adc_UT);
+	int32_t adc_T = (int32_t) adc_UT;
 
 	if(adc_T == 0x800000){
 		return -1;
@@ -236,8 +237,14 @@ int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp){
 			  ((adc_T>>4) - ((int32_t)bme280_calib.dig_T1))) >> 12) *
 			((int32_t)bme280_calib.dig_T3)) >> 14;
 
-	int32_t t_fine = var1 + var2;
+	*t_fine = var1 + var2;
 
+	return 0;
+}
+
+int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp){
+	int32_t t_fine = 0;
+	Bme280_ReadTemperatureFine(i2c, &t_fine);
 	*temp = (t_fine * 5 + 128) >> 8;
 	return 0;
 }
@@ -245,13 +252,15 @@ int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp){
 int32_t Bme280_ReadPressure(I2C_TypeDef *i2c, int32_t *pres){
 	int64_t var1, var2, p;
 
-	uint32_t adc_UP;
+	uint32_t adc_UP = 0;
 	Bme280_Read24(i2c, BME280_REG_PRESDATA, &adc_UP);
+	//adc_UP = 5209856;
 
-	int32_t adc_P = (int32_t) adc_UP;
+	//int32_t adc_P = (int32_t) adc_UP;
+	int32_t adc_P = 5209856;
 
-	int32_t t_fine;
-	Bme280_ReadTemperature(i2c, &t_fine);
+	int32_t t_fine = 0;
+	Bme280_ReadTemperatureFine(i2c, &t_fine);
 
 	if (adc_P == 0x800000) // value in case pressure measurement was disabled
 		return -1;
@@ -276,15 +285,15 @@ int32_t Bme280_ReadPressure(I2C_TypeDef *i2c, int32_t *pres){
 
 	p = ((p + var1 + var2) >> 8) + (((int64_t)bme280_calib.dig_P7)<<4);
 
-	*pres = (int32_t) (p/256.0);
+	*pres = (int32_t) ((float)p/256.0);
 	return 0;
 }
 
 int32_t Bme280_ReadHumidity(I2C_TypeDef *i2c, int32_t *hum){
-	int32_t t_fine;
-	Bme280_ReadTemperature(i2c, &t_fine);
+	int32_t t_fine = 0;
+	Bme280_ReadTemperatureFine(i2c, &t_fine);
 
-	uint16_t adc_H;
+	uint16_t adc_H = 0;
 	Bme280_Read16(i2c, BME280_REG_HUMDATA, &adc_H);
 
 	if (adc_H == 0x8000) // value in case humidity measurement was disabled

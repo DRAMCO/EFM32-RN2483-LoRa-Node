@@ -72,6 +72,7 @@ int32_t Bme280_ReadCoefficients(I2C_TypeDef *i2c);
 int32_t Bme280_SetWeatherSampling(I2C_TypeDef *i2c);
 int32_t Bme280_TakeForcedMeasurement(I2C_TypeDef *i2c);
 int32_t Bme280_ReadTemperature(I2C_TypeDef *i2c, int32_t *temp);
+int32_t Bme280_ReadTemperatureFine(I2C_TypeDef *i2c, int32_t *t_fine);
 int32_t Bme280_ReadPressure(I2C_TypeDef *i2c, int32_t *pres);
 int32_t Bme280_ReadHumidity(I2C_TypeDef *i2c, int32_t *hum);
 

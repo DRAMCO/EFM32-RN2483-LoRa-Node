@@ -209,7 +209,7 @@ bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiv
 	RN2483_SetApplicationEUI(appEUI, receiveBuffer, bufferSize);
 	RN2483_SetApplicationKey(appKey, receiveBuffer, bufferSize);
 	RN2483_SetOutputPower(RN2483_POWER_14DBM, receiveBuffer, bufferSize);
-	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize);
+	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize); // aan en uit?
 	RN2483_DisableAutomaticReplies(receiveBuffer, bufferSize);
 	RN2483_EnableAdaptiveDataRate(receiveBuffer, bufferSize);
 	uint8_t dataRate = rand()%5;
