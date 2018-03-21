@@ -42,35 +42,39 @@ void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autoba
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
 
-	setupDma();
-	Leuart_BreakCondition();
-	setupLeuart();
+	Leuart_Init();
 
 	sprintf(commandBuffer, "U");
 	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
 	DelayMs(20);
 }
+
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac get deveui\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_GetSystemVersion(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys get ver\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_GetApplicationEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys get appeui\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac reset 868\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 	//Leuart_SendCommand(commandBuffer, 10, receiveBuffer, bufferSize);
 }
+
 void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
 		strcpy(deviceEUI, eui);
@@ -79,6 +83,7 @@ void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set deveui %s\r\n", deviceEUI);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_SetApplicationEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
 		strcpy(applicationEUI, eui);
@@ -87,6 +92,7 @@ void RN2483_SetApplicationEUI(char * eui, char * receiveBuffer, uint8_t bufferSi
 	sprintf(commandBuffer, "mac set appeui %s\r\n", applicationEUI);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_SetApplicationKey(char * key, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(key) == 32){
 		strcpy(applicationKey, key);
@@ -95,6 +101,7 @@ void RN2483_SetApplicationKey(char * key, char * receiveBuffer, uint8_t bufferSi
 	sprintf(commandBuffer, "mac set appkey %s\r\n", applicationKey);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 void RN2483_SetApplicationSessionKey(char * skey, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(skey) == 32){
 		strcpy(applicationSessionKey, skey);
@@ -157,38 +164,39 @@ void RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac save\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+
 bool RN2483_JoinOTAA(char * receiveBuffer, uint8_t bufferSize){
 	otaa = true;
-	bool joined = false;
-	for(int i=0; i<10 && !joined; i++){
+	for(int i=0; i<10; i++){
 		sprintf(commandBuffer, "mac join otaa\r\n");
 		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);// Receive command response
 		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
-			joined = true;
 			DelayMs(100);
+			return true;
 		}else{
 			DelayMs(5000);
 		}
 	}
-	return joined;
+	return false;
 }
+
 bool RN2483_JoinABP(char * receiveBuffer, uint8_t bufferSize){
 	otaa = false;
-	bool joined = false;
-	for(int i=0; i<10 && !joined; i++){
+	for(int i=0; i<10; i++){
 		sprintf(commandBuffer, "mac join abp\r\n");
 		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize); // Receive command response
 		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
-			joined = true;
-			DelayMs(50);
+			DelayMs(100);
+			return true;
 		}else{
-			DelayMs(50);
+			DelayMs(5000);
 		}
 	}
-	return joined;
+	return false;
 }
+
 bool RN2483_Setup(char * receiveBuffer, uint8_t bufferSize){
 	if(otaa){
 		return RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, bufferSize);
@@ -196,6 +204,7 @@ bool RN2483_Setup(char * receiveBuffer, uint8_t bufferSize){
 		return RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, bufferSize);
 	}
 }
+
 bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiveBuffer, uint8_t bufferSize){
 	RN2483_MacReset(receiveBuffer, bufferSize);
 	if(devEUI == NULL){
@@ -219,6 +228,7 @@ bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiv
 	bool joined = RN2483_JoinOTAA(receiveBuffer, bufferSize);
 	return joined;
 }
+
 bool RN2483_SetupABP(char * devAddr, char * appKey, char * NwkSKey, char * receiveBuffer, uint8_t bufferSize){
 	RN2483_MacReset(receiveBuffer, bufferSize);
 	RN2483_SetNetworkSessionKey(NwkSKey, receiveBuffer, bufferSize);
@@ -231,9 +241,11 @@ bool RN2483_SetupABP(char * devAddr, char * appKey, char * NwkSKey, char * recei
 	bool joined = RN2483_JoinABP(receiveBuffer, bufferSize);
 	return joined;
 }
+
 uint8_t RN2483_Transmit(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
 	return RN2483_TransmitUnconfirmed(data, payloadSize,  receiveBuffer, bufferSize);
 }
+
 uint8_t RN2483_TransmitUnconfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
 	char * decodedPayload;
 	StringToHexString(data, payloadSize/2, &decodedPayload);
@@ -241,6 +253,7 @@ uint8_t RN2483_TransmitUnconfirmed(char * data, uint8_t payloadSize, char * rece
 	free(decodedPayload);
 	return RN2483_TransmitProcessCommand(payloadSize + 18, receiveBuffer, bufferSize);
 }
+
 uint8_t RN2483_TransmitConfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
 	char * decodedPayload;
 	StringToHexString(data, payloadSize/2, &decodedPayload);
@@ -248,6 +261,7 @@ uint8_t RN2483_TransmitConfirmed(char * data, uint8_t payloadSize, char * receiv
 	free(decodedPayload);
 	return RN2483_TransmitProcessCommand(payloadSize + 17, receiveBuffer, bufferSize);
 }
+
 uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer, uint8_t bufferSize){
 	bool sendDone = false;
 	uint8_t busyCounter = 0;

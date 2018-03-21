@@ -1,5 +1,5 @@
 /*******************************************************************************
- * @file delay.h
+ * @file delay.c
  * @brief Delay functions
  * @author Silicon Labs
  * @version 1.03
@@ -31,10 +31,24 @@
  *
  ******************************************************************************/
 
-#ifndef _DELAY_H_
-#define _DELAY_H_
+#include <em_device.h>
+#include <em_timer.h>
+#include <em_emu.h>
+#include <rtcdriver.h>
 
-void InitDelay();
-void DelayMs(int ms);
+RTCDRV_TimerID_t xTimerForWakeUp;
 
-#endif
+void Delay_Init(){
+	RTCDRV_Init();
+	RTCDRV_AllocateTimer(&xTimerForWakeUp);
+}
+
+/**********************************************************
+ * Delay a number of milliseconds
+ **********************************************************/
+void DelayMs(int ms){
+	RTCDRV_StartTimer(xTimerForWakeUp, rtcdrvTimerTypeOneshot, ms, NULL, NULL);
+	EMU_EnterEM2(true);
+}
+
+

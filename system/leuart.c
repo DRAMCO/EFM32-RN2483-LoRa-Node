@@ -38,6 +38,12 @@ char receiveBuffer[RECEIVE_BUFFER_SIZE];
 volatile uint8_t bufferPointer = 0;
 volatile bool receiveComplete = false;
 
+/** Internal function prototypes */
+static void basicTxComplete(unsigned int channel, bool primary, void *user);
+static void basicRxComplete(unsigned int channel, bool primary, void *user);
+void setupDma(void);
+void setupLeuart(void);
+
 static void basicTxComplete(unsigned int channel, bool primary, void *user){
   (void) user;
   /* Refresh DMA basic transaction cycle */
@@ -69,6 +75,7 @@ static void basicRxComplete(unsigned int channel, bool primary, void *user){
 		bufferPointer = 0;
 	}
 }
+
 void setupDma(void){
 	/* DMA configuration structs */
 	DMA_Init_TypeDef       dmaInit;
@@ -137,6 +144,7 @@ void setupDma(void){
 	/* Configure primary descriptor */
 	DMA_CfgDescr(DMA_CHANNEL_TX, true, &txDescrCfg);
 }
+
 void sendLeuartData(char * buffer, uint8_t bufferLength){
 	// Wait for sync
 	while (LEUART0->SYNCBUSY);
@@ -150,6 +158,7 @@ void sendLeuartData(char * buffer, uint8_t bufferLength){
 
 	 while(DMA_ChannelEnabled(DMA_CHANNEL_TX)); // EnterEM
 }
+
 void setupLeuart(void){
   /* Enable peripheral clocks */
   CMU_ClockEnable(cmuClock_HFPER, true);
@@ -189,21 +198,31 @@ void setupLeuart(void){
   /* Finally enable it */
   LEUART_Enable(LEUART0, leuartEnable);
 }
-void Leuart_BreakCondition(){
+
+void Leuart_Init(void){
+	setupDma();
+	Leuart_BreakCondition();
+	setupLeuart();
+}
+
+void Leuart_BreakCondition(void){
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
 	DelayMs(20);
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 0);
 	DelayMs(20);
 	GPIO_PinOutSet(LEUART_TXPORT, LEUART_TXPIN);
 }
-bool Leuart_ResponseAvailable(){
+
+bool Leuart_ResponseAvailable(void){
 	return receiveComplete;
 }
+
 void Leuart_ReadResponse(char * buffer, uint8_t bufferLength){
 	sprintf(buffer, "%s", receiveBuffer);
 	receiveComplete = false;
 	bufferPointer = 0;
 }
+
 void Leuart_SendCommand(char * cb, uint8_t cbl, char * rb, uint8_t rbl){
 	sendLeuartData(cb, cbl);
 	while(!Leuart_ResponseAvailable()){
@@ -211,6 +230,7 @@ void Leuart_SendCommand(char * cb, uint8_t cbl, char * rb, uint8_t rbl){
 	}
 	Leuart_ReadResponse(rb, rbl);
 }
+
 void Leuart_WaitForResponse(char * rb, uint8_t rbl){
 	DMA_ActivateBasic(	DMA_CHANNEL_RX,
 						true,
