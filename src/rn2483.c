@@ -15,6 +15,7 @@
 #include "em_chip.h"
 #include "em_cmu.h"
 #include "em_gpio.h"
+#include "em_leuart.h"
 #include "em_usart.h"
 
 #include "leuart.h"
@@ -35,6 +36,8 @@ char applicationSessionKey[33];
 char deviceAddress[9];
 
 void RN2483_Init(char * receiveBuffer, uint8_t bufferSize){ // Setup with autobaud
+	LEUART_Reset(LEUART0);
+	DelayMs(20);
 	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
 	DelayMs(20);
 	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
@@ -54,6 +57,21 @@ void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 }
+void RN2483_SleepWithoutResponse(uint32_t sleepTime){
+	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
+	sendLeuartData(commandBuffer, strlen(commandBuffer));
+}
+void RN2483_Wake(char * receiveBuffer, uint8_t bufferSize){
+	LEUART_Reset(LEUART0);
+	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
+	Leuart_BreakCondition();
+	setupLeuart();
+
+	sprintf(commandBuffer, "U");
+	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+	Leuart_WaitForResponse(receiveBuffer, bufferSize);
+	DelayMs(30);
+}
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac get deveui\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
@@ -70,6 +88,17 @@ void RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac reset 868\r\n");
 	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
 	//Leuart_SendCommand(commandBuffer, 10, receiveBuffer, bufferSize);
+}
+void RN2483_GetMacStatus(char * receiveBuffer, uint8_t bufferSize){
+	sprintf(commandBuffer, "mac get status\r\n");
+	Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
+}
+bool RN2483_GetJoined(char * receiveBuffer, uint8_t bufferSize){
+	RN2483_GetMacStatus(receiveBuffer, bufferSize);
+	if(receiveBuffer[7]>48)
+		return true;
+	else
+		return false;
 }
 void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize){
 	if(strlen(eui) == 16){
@@ -160,13 +189,14 @@ void RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize){
 bool RN2483_JoinOTAA(char * receiveBuffer, uint8_t bufferSize){
 	otaa = true;
 	bool joined = false;
-	for(int i=0; i<10 && !joined; i++){
+	for(int i=0; i<10; i++){
 		sprintf(commandBuffer, "mac join otaa\r\n");
 		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);// Receive command response
 		Leuart_WaitForResponse(receiveBuffer, bufferSize); // Receive accepted
 		if(StringStartsWith(receiveBuffer, "accepted")){
 			joined = true;
 			DelayMs(100);
+			return joined;
 		}else{
 			DelayMs(5000);
 		}
@@ -209,11 +239,12 @@ bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiv
 	RN2483_SetApplicationEUI(appEUI, receiveBuffer, bufferSize);
 	RN2483_SetApplicationKey(appKey, receiveBuffer, bufferSize);
 	RN2483_SetOutputPower(RN2483_POWER_14DBM, receiveBuffer, bufferSize);
-	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize); // aan en uit?
+	RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize);
 	RN2483_DisableAutomaticReplies(receiveBuffer, bufferSize);
-	RN2483_EnableAdaptiveDataRate(receiveBuffer, bufferSize);
 	uint8_t dataRate = rand()%5;
+	dataRate = 5;
 	RN2483_SetDataRate(dataRate, receiveBuffer, bufferSize);
+	RN2483_EnableAdaptiveDataRate(receiveBuffer, bufferSize);
 	RN2483_SetBatteryLevel(150, receiveBuffer, bufferSize);
 	RN2483_SaveMac(receiveBuffer, bufferSize);
 	bool joined = RN2483_JoinOTAA(receiveBuffer, bufferSize);
@@ -278,6 +309,8 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 				return TX_SUCCESS;
 			}else if(StringStartsWith(receiveBuffer, "radio_err")){
 				RN2483_Setup(receiveBuffer, bufferSize);
+			}else{
+				return TX_FAIL;
 			}
 		}else if(StringStartsWith(receiveBuffer, "invalid_param")){
 			sendDone = true;
@@ -285,7 +318,7 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 		}else if(StringStartsWith(receiveBuffer, "not_joined")){
 			RN2483_Setup(receiveBuffer, bufferSize);
 		}else if(StringStartsWith(receiveBuffer, "no_free_ch")){
-			DelayMs(500);
+			DelayMs(1000);
 		}else if(StringStartsWith(receiveBuffer, "silent")){
 			RN2483_Setup(receiveBuffer, bufferSize);
 		}else if(StringStartsWith(receiveBuffer, "frame_counter_err_rejoin_needed")){
@@ -303,7 +336,10 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 			sendDone = true;
 			return TX_FAIL;
 		}else{
-			RN2483_Setup(receiveBuffer, bufferSize);
+			//DelayMs(1000);
+			//RN2483_Setup(receiveBuffer, bufferSize);
+			return TX_FAIL;
+			//RN2483_Setup(receiveBuffer, bufferSize);
 		}
 	}
 	return TX_FAIL;

@@ -65,7 +65,8 @@ src/main.o: ../src/main.c \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h \
  C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/battery.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h
+ C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h \
+ C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/inttemp.h
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h:
 
@@ -200,3 +201,5 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/battery.h:
 
 C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h:
+
+C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/inttemp.h:

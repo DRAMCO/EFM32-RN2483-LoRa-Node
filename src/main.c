@@ -33,8 +33,15 @@
 #include "rn2483.h"
 #include "battery.h"
 #include "delay.h"
+#include "inttemp.h"
 
 #define BUFFERSIZE 50
+
+#define SHAKESENSOR
+//#define WEATHERSENSOR
+
+volatile bool shakeHappened = false;
+uint8_t messageCounter = 0;
 
 int main(void){
 
@@ -44,59 +51,68 @@ int main(void){
 	char receiveBuffer[BUFFERSIZE];
 	memset(receiveBuffer, '\0', BUFFERSIZE);
 
-	/*char deviceEUI[] = "00E6457CE8B52C56";
-	char applicationEUI[] = "70B3D57ED00096E2";
-	char applicationKey[] = "B01931C73C3BEA2CC754343AFF3B1962";
-	*/
-
-	char deviceEUI[] = "0080DD42184A0A0B";
-	char applicationEUI[] = "70B3D57ED000A7C6";
-	char applicationKey[] = "5B115E6BAD1144DDCDA486BEC896A2CB";
-
-	uint8_t messageCounter = 0;
-
-	/*
-	char deviceAddress[] = "26011DB5";
-	char networkSessionKey[] = "9305CC461CA931F4DA4E16C9339622D0";
-	char applicationSessionKey[] = "0A95C8F1FE8BE97ADB71B799B546269A";
-	 */
+	char deviceEUI[] = "00377EA9ABB5CCC8";
+	char applicationEUI[] = "70B3D57ED000A931";
+	char applicationKey[] = "B38D13EE1437E4D375C0830D57477E44";
 
 	/* Chip errata */
 	CHIP_Init();
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	InitDelay();
 
-	DelayMs(500);
+
+
+	DelayMs(100);
 
 	I2CSPM_Init(&i2cInit);
 
-	//GPIO_PinModeSet(gpioPortE, 10, gpioModePushPull, 1);
-	//GPIO_PinModeSet(gpioPortE, 11, gpioModePushPull, 0);
+#ifdef SHAKESENSOR
+	GPIO_PinModeSet(gpioPortC, 8, gpioModePushPull, 1);
+	GPIO_PinOutSet(gpioPortC, 8);
+	Lis3dh_Init(i2cInit.port);
+	Lis3dh_InitShakeDetection(i2cInit.port);
+#endif
 
-	/*Lis3dh_Init(i2cInit.port);
-
-	uint8_t id = Lis3dh_ReadWhoAmI(i2cInit.port);
-
-
-	uint16_t x = 0;
-	uint16_t y = 0;
-	uint16_t z = 0;
-
-	Lis3dh_ReadValues(i2cInit.port, &x, &y, &z);
-	uint8_t blabla = 0;*/
+#ifdef WEATHERSENSOR
 	Bme280_Init(i2cInit.port);
-
+#endif
 
 	adcInit();
-
 	RN2483_Init(receiveBuffer, BUFFERSIZE);
-
 	DelayMs(500);
 
-	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
+	bool joined = false;
+	if(RN2483_GetJoined(receiveBuffer, BUFFERSIZE)){
+		joined = true;
+	}else{
+		joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
+	}
 	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
 
 	while(1){
+#ifdef SHAKESENSOR
+		if(shakeHappened && joined){
+			NVIC_DisableIRQ(GPIO_ODD_IRQn);
+
+			uint16_t temperature = GetInternalTemperature();
+
+			char payload[5];
+			uint8_t payloadSize = 8;
+			payload[0] = 0x01;
+			payload[1] = 0x67;
+			payload[2] = (uint8_t)((temperature & 0x0000FF00)>>8);
+			payload[3] = (uint8_t)(temperature & 0x000000FF);
+			payload[4] = '\0';
+			RN2483_Wake(receiveBuffer, BUFFERSIZE);
+			RN2483_TransmitUnconfirmed(payload, payloadSize, receiveBuffer, BUFFERSIZE);
+			shakeHappened = false;
+			NVIC_EnableIRQ(GPIO_ODD_IRQn);
+		}
+		RN2483_SleepWithoutResponse(UINT32_MAX);
+		DelayMs(20);
+		EMU_EnterEM3(true);
+#endif
+#ifdef WEATHERSENSOR
 		Bme280_TakeForcedMeasurement(i2cInit.port);
 
 		int32_t temperature;
@@ -147,9 +163,18 @@ int main(void){
 
 			RN2483_TransmitUnconfirmed(payload, payloadSize, receiveBuffer, BUFFERSIZE);
 
-			messageCounter = (messageCounter + 1)%10;
 		}
 		RN2483_Sleep(1800000, receiveBuffer, BUFFERSIZE);
+#endif
+		messageCounter = (messageCounter + 1) % 10;
 	}
 
+
+}
+
+void GPIO_ODD_IRQHandler(void){
+	if(GPIO_PinInGet(LIS3DH_INT_PORT, LIS3DH_INT_PIN)){
+		GPIO_IntClear(1<<LIS3DH_INT_PIN);
+		shakeHappened = true;
+	}
 }

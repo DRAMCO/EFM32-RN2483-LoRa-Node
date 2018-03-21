@@ -34,6 +34,7 @@
 #include "em_device.h"
 #include "em_timer.h"
 #include "em_cmu.h"
+#include "em_emu.h"
 #include "rtcdriver.h"
 
 RTCDRV_TimerID_t xTimerForWakeUp;

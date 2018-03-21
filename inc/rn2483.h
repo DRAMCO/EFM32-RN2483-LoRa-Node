@@ -27,10 +27,14 @@
 
 void RN2483_Init(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_Sleep(uint32_t sleepTime, char * receiveBuffer, uint8_t bufferSize);
+void RN2483_SleepWithoutResponse(uint32_t sleepTime);
+void RN2483_Wake(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_GetHardwareEUI(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_GetSystemVersion(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_GetApplicationEUI(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize);
+void RN2483_GetMacStatus(char * receiveBuffer, uint8_t bufferSize);
+bool RN2483_GetJoined(char * receiveBuffer, uint8_t bufferSize);
 void RN2483_SetDeviceEUI(char * eui, char * receiveBuffer, uint8_t bufferSize);
 void RN2483_SetApplicationEUI(char * eui, char * receiveBuffer, uint8_t bufferSize);
 void RN2483_SetApplicationKey(char * key, char * receiveBuffer, uint8_t bufferSize);

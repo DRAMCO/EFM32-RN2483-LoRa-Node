@@ -1,4 +1,4 @@
-src/rn2483.o: ../src/rn2483.c \
+src/inttemp.o: ../src/inttemp.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg322f64.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\cmsis\include\arm_math.h \
@@ -44,20 +44,16 @@ src/rn2483.o: ../src/rn2483.c \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_dmactrl.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_ports.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_pins.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_adc.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_chip.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_system.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_bus.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_assert.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_cmu.h \
+ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h \
  c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_leuart.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/leuart.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/util.h \
- C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h \
- c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h
+ C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/inttemp.h
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\em_device.h:
 
@@ -149,6 +145,8 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\device\siliconlabs\efm32hg\include\efm32hg_af_pins.h:
 
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_adc.h:
+
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_chip.h:
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_system.h:
@@ -161,18 +159,8 @@ c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\
 
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_cmu.h:
 
+c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h:
+
 c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_gpio.h:
 
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_leuart.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_usart.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/leuart.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/delay.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/util.h:
-
-C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/rn2483.h:
-
-c:\siliconlabs\simplicitystudio\v4\developer\sdks\gecko_sdk_suite\v2.1\platform\emlib\inc\em_emu.h:
+C:\Users\Guus\ Leenders\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\inc/inttemp.h:

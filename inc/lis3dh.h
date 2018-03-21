@@ -49,6 +49,9 @@
 #define LIS3DH_REG_ACTTHS        0x3E
 #define LIS3DH_REG_ACTDUR        0x3F
 
+#define LIS3DH_INT_PORT 		gpioPortC
+#define LIS3DH_INT_PIN 			1
+
 typedef enum
 {
   LIS3DH_RANGE_16_G         = 0b11,   // +/- 16g
@@ -81,9 +84,14 @@ typedef enum
 
 } lis3dh_dataRate_t;
 
+int32_t Lis3dh_Read8(I2C_TypeDef *i2c, uint8_t reg_addr, uint8_t *data);
+int32_t Lis3dh_Read16(I2C_TypeDef *i2c, uint8_t reg_addr, uint16_t *data);
+int32_t Lis3dh_Write8(I2C_TypeDef *i2c, uint8_t reg_addr, uint8_t data);
 bool Lis3dh_Init(I2C_TypeDef *i2c);
 uint8_t Lis3dh_ReadWhoAmI(I2C_TypeDef *i2c);
 uint8_t Lis3dh_SetDataRate(I2C_TypeDef *i2c, uint8_t dr);
 uint8_t Lis3dh_ReadValues(I2C_TypeDef *i2c, uint16_t * x, uint16_t * y, uint16_t * z);
+uint8_t Lis3dh_InitShakeDetection(I2C_TypeDef *i2c);
+//uint8_t Lis3dh_ReadTemperature(I2C_TypeDef *i2c, int8_t * temperature);
 
 #endif /* INC_LIS3DH_H_ */

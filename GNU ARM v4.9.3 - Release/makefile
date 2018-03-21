@@ -32,7 +32,7 @@ all: EFM32-RN2483-LoRa-Node.axf
 EFM32-RN2483-LoRa-Node.axf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GNU ARM C Linker'
-	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "EFM32-RN2483-LoRa-Node.ld" -Xlinker --gc-sections -Xlinker -Map="EFM32-RN2483-LoRa-Node.map" --specs=nano.specs -o EFM32-RN2483-LoRa-Node.axf "./CMSIS/EFM32HG/startup_efm32hg.o" "./CMSIS/EFM32HG/system_efm32hg.o" "./Drivers/dmactrl.o" "./Drivers/i2cspm.o" "./Drivers/rtcdriver.o" "./emlib/em_adc.o" "./emlib/em_cmu.o" "./emlib/em_core.o" "./emlib/em_dma.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_i2c.o" "./emlib/em_leuart.o" "./emlib/em_rtc.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/battery.o" "./src/bme280.o" "./src/delay.o" "./src/leuart.o" "./src/lis3dh.o" "./src/main.o" "./src/rn2483.o" "./src/util.o" -lm -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
+	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -T "EFM32-RN2483-LoRa-Node.ld" -Xlinker --gc-sections -Xlinker -Map="EFM32-RN2483-LoRa-Node.map" --specs=nano.specs -o EFM32-RN2483-LoRa-Node.axf "./CMSIS/EFM32HG/startup_efm32hg.o" "./CMSIS/EFM32HG/system_efm32hg.o" "./Drivers/dmactrl.o" "./Drivers/i2cspm.o" "./Drivers/rtcdriver.o" "./emlib/em_adc.o" "./emlib/em_cmu.o" "./emlib/em_core.o" "./emlib/em_dma.o" "./emlib/em_emu.o" "./emlib/em_gpio.o" "./emlib/em_i2c.o" "./emlib/em_leuart.o" "./emlib/em_rtc.o" "./emlib/em_system.o" "./emlib/em_usart.o" "./src/battery.o" "./src/bme280.o" "./src/delay.o" "./src/inttemp.o" "./src/leuart.o" "./src/lis3dh.o" "./src/main.o" "./src/rn2483.o" "./src/util.o" -lm -Wl,--start-group -lgcc -lc -lnosys -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
