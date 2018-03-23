@@ -27,6 +27,7 @@
  */
 #define OVER_THE_AIR_ACTIVATION    1
 
+
 #if OVER_THE_AIR_ACTIVATION == 1
 // Copy your settings here
 /* 64-bit device ID */

@@ -13,6 +13,7 @@
 
 
 void sendLeuartData(char * buffer, uint8_t bufferLength);
+void setupLeuart(void);
 
 void Leuart_Init(void);
 void Leuart_BreakCondition(void);

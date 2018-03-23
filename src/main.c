@@ -16,147 +16,118 @@
  ******************************************************************************/
 #include <stdlib.h>
 
-//
+// LoRa Communication
 #include "lora.h"
+#include "lpp.h"
 #include "my_lora_device.h"
-//
+// Micro-controller system
 #include "system.h"
-//
-#include "bme280.h"
+// Sensors
 #include "lis3dh.h"
+#include "si7021.h"
 
-#include "battery.h"
+bool sleeping;
 
+// Interrupt callback functions
+void PB0_Pressed(void){
+	if(sleeping){
+		//LoRa_WakeUp();
+		sleeping = false;
+	}
+}
 
+void LED_ERROR(void){
+	while(1){
+		DelayMs(200);
+		LED_Toggle();
+	}
+}
 
-void DoSomething(){
-	LED_Toggle();
+void LED_HALTED(void){
+	while(1){
+		DelayMs(2000);
+		LED_Toggle();
+	}
 }
 
 int main(void){
-	/* Chip errata */
+	/* Variables */
+	LPP_Buffer_t appData;
+	uint32_t rhData;
+	int32_t tData;
+	uint32_t batteryLevel;
+
+	/* Initialize the system hardware */
 	System_Init();
 
-	// Sensors Init (don't forget power supply stuff)
-
-
-	Buttons_AttachInterrupt(&DoSomething, BUTTON_PB0);
-
-
-
+	// Now we can do stuff like this:
+		// Respond to button press (interrupt-based)
+	Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
+		// Read the battery level
+	ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
+		// Wait (in EM2)
 	DelayMs(500);
 
+
+	/* Initialize sensors */
+	// 1. Temperature and relative humidity
+	PM_Enable(PM_SENS_GECKO);
+	DelayMs(20);
+	if(!Si7021_Detect()){
+		LED_ERROR();
+	}
+	//PM_Disble(PM_SENS_GECKO);
+
+	// 2. Accelerometer
+	/*PM_Enable(PM_SENS_EXT);
+	if(!Lis3dh_Init()){
+		LED_ERROR();
+	}*/
 
 	/* Initialize LoRa communication */
 	LoRaSettings_t loraSettings = LORA_INIT_MY_DEVICE;
 	LoRaStatus_t loraStatus =  LoRa_Init(loraSettings);
-	if(loraStatus == JOINED){
-		while(1){
-			DelayMs(200);
-			LED_Toggle();
-		}
-	}
-	else{
-		while(1){
-			DelayMs(2000);
-			LED_Toggle();
-		}
+	if(loraStatus != JOINED){
+		LED_ERROR();
 	}
 
-
-	//I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
-
-
-
-	//uint8_t messageCounter = 0;
-
-
-	//I2CSPM_Init(&i2cInit);
-
-	//GPIO_PinModeSet(gpioPortE, 10, gpioModePushPull, 1);
-	//GPIO_PinModeSet(gpioPortE, 11, gpioModePushPull, 0);
-
-	/*Lis3dh_Init(i2cInit.port);
-
-	uint8_t id = Lis3dh_ReadWhoAmI(i2cInit.port);
-
-
-	uint16_t x = 0;
-	uint16_t y = 0;
-	uint16_t z = 0;
-
-	Lis3dh_ReadValues(i2cInit.port, &x, &y, &z);
-	uint8_t blabla = 0;*/
-	//Bme280_Init(i2cInit.port);
-
-
-	adcInit();
-
-	//RN2483_Init(receiveBuffer, BUFFERSIZE);
-
-	DelayMs(500);
-
-	//bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
-	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
-
+	int16_t tempLPP;
+	uint8_t humidityLPP;
+	int16_t batteryLPP;
 	while(1){
-		/*Bme280_TakeForcedMeasurement(i2cInit.port);
+		// Measure temperature and relative humidity
+		PM_Enable(PM_SENS_GECKO);
+		DelayMs(20);
+		Si7021_MeasureRHAndTemp(&rhData, &tData);
+		PM_Disable(PM_SENS_GECKO);
+		// Change readings to LPP format
+		tempLPP = (int16_t)(round((float)tData/100));
+		humidityLPP = (uint8_t)(rhData/500);
 
-		int32_t temperature;
-		Bme280_ReadTemperature(i2cInit.port, &temperature);
-		int16_t tempLPP = (int16_t) round((float)temperature/10);
+		// Measure battery level
+		ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel);
+		// Change reading to LPP format
+		batteryLPP = (int16_t)(round((float)batteryLevel*0.09765625));
 
-		int32_t pressure;
-		Bme280_ReadPressure(i2cInit.port, &pressure);
-		int16_t pressureLPP = (int16_t) round((float)pressure/10);
-
-		int32_t humidity;
-		Bme280_ReadHumidity(i2cInit.port, &humidity);
-		uint8_t humidityLPP = (int8_t) (humidity*2/10);*/
-
-		/*int16_t tempLPP = 1;
-		int16_t pressureLPP = 2;
-		uint8_t humidityLPP = 3;
-
-		uint32_t battery = checkBattery()*0.09765625; // 1.25/4096*100/0.3125
-
-		if(joined){
-			char payload[16];
-
-			// Temperature
-			payload[0] = 0x01;
-			payload[1] = 0x67;
-			payload[2] = (uint8_t)((tempLPP & 0x0000FF00)>>8);
-			payload[3] = (uint8_t)(tempLPP & 0x000000FF);
-
-			//Humidity
-			payload[4] = 0x02;
-			payload[5] = 0x68;
-			payload[6] = humidityLPP ;
-
-			//Pressure
-			payload[7] = 0x03;
-			payload[8] = 0x73;
-			payload[9] = (uint8_t)((pressureLPP & 0x0000FF00)>>8);
-			payload[10] = (uint8_t)(pressureLPP & 0x000000FF);
-
-			payload[11] = '\0';
-
-			uint8_t payloadSize = 22;
-			if(messageCounter == 0){
-				payload[11] = 0x04;
-				payload[12] = 0x02;
-				payload[13] = (uint8_t)((battery & 0x0000FF00)>>8);
-				payload[14] = (uint8_t)(battery & 0x000000FF);
-				payload[15] = '\0';
-				payloadSize = 30;
-			}
-
-			RN2483_TransmitUnconfirmed(payload, payloadSize, receiveBuffer, BUFFERSIZE);
-
-			messageCounter = (messageCounter + 1)%10;
+		if(!LPP_InitBuffer(&appData, 16)){
+			LED_ERROR();
 		}
-		RN2483_Sleep(1800000, receiveBuffer, BUFFERSIZE);*/
+		if(!LPP_AddTemperature(&appData, tempLPP)){
+			LED_ERROR();
+		}
+		if(!LPP_AddHumidity(&appData, humidityLPP)){
+			LED_ERROR();
+		}
+		if(!LPP_AddAnalog(&appData, batteryLPP)){
+			LED_ERROR();
+		}
+
+		if(LoRa_SendLppBuffer(appData, LORA_UNCONFIMED) != SUCCESS){
+			LED_ERROR();
+		}
+
+		sleeping = true;
+		LoRa_Sleep(60000);
 	}
 
 }

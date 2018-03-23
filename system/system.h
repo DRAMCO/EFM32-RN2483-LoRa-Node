@@ -26,6 +26,8 @@
 #include "led.h"
 #include "buttons.h"
 #include "pm.h"
+#include "adc.h"
+#include "iic.h"
 
 void System_Init(void);
 

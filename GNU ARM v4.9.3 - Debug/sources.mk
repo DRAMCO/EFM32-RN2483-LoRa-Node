@@ -18,5 +18,9 @@ SUBDIRS := \
 CMSIS/EFM32HG \
 Drivers \
 emlib \
+lora \
+sensors \
 src \
+system \
+util \
 

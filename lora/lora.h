@@ -21,11 +21,15 @@
 #ifndef LORA_LORA_H_
 #define LORA_LORA_H_
 
+#define LORA_UNCONFIMED				false
+#define LORA_CONFIRMED				true
+
 #define LORA_EUI_LENGTH				16
 #define LORA_KEY_LENGTH				32
 #define LORA_DEVICE_ADDRESS_LENGTH	8
 
 #include <em_device.h>
+#include "lpp.h"
 
 typedef enum lora_statuses{
 	JOINED,
@@ -50,7 +54,10 @@ typedef struct{
 
 LoRaStatus_t LoRa_Init(LoRaSettings_t init);
 
+LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck);
+
 void LoRa_Sleep(uint32_t durationMs);
+void LoRa_WakeUp(void);
 
 void LoRa_DeepSleep(void);
 

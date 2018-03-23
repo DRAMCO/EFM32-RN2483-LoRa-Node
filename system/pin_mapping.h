@@ -23,19 +23,21 @@
 #define PINMAPPING_H_
 
 // User LED
-#define LED_PORT		gpioPortA
-#define LED_PIN			2
+#define LED_PORT			gpioPortA
+#define LED_PIN				2
 
 // Push buttons
-#define PB0_PORT		gpioPortC
-#define PB0_PIN			9
-#define PB1_PORT		gpioPortC
-#define PB1_PIN			10
+#define PB0_PORT			gpioPortC
+#define PB0_PIN				9
+#define PB1_PORT			gpioPortC
+#define PB1_PIN				10
 
 // Power supply enable
-#define PM_SENSORS_PORT	gpioPortC
-#define PM_SENSORS_PIN	8
-#define PM_RN2483_PORT	gpioPortA
-#define PM_RN2483_PIN	9
+#define PM_RN2483_PORT		gpioPortA
+#define PM_RN2483_PIN		8
+#define PM_SENS_GECKO_PORT	gpioPortC
+#define PM_SENS_GECKO_PIN	8
+#define PM_SENS_EXT_PORT	gpioPortA
+#define PM_SENS_EXT_PIN		9
 
 #endif /* SYSTEM_PINMAPPING_H_ */

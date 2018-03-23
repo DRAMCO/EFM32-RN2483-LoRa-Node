@@ -22,7 +22,8 @@
 #define SYSTEM_PM_H_
 
 typedef enum PM_subsystems{
-	PM_SENSORS,
+	PM_SENS_GECKO,
+	PM_SENS_EXT,
 	PM_RN2483,
 	PM_ALL
 } PM_SubSystem_t;

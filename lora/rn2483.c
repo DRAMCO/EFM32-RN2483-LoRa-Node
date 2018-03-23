@@ -16,6 +16,7 @@
 #include "em_cmu.h"
 #include "em_gpio.h"
 #include "em_usart.h"
+#include <em_leuart.h>
 
 #include "leuart.h"
 #include "delay.h"
@@ -242,23 +243,24 @@ bool RN2483_SetupABP(char * devAddr, char * appKey, char * NwkSKey, char * recei
 	return joined;
 }
 
-uint8_t RN2483_Transmit(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
-	return RN2483_TransmitUnconfirmed(data, payloadSize,  receiveBuffer, bufferSize);
-}
-
-uint8_t RN2483_TransmitUnconfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
-	char * decodedPayload;
-	StringToHexString(data, payloadSize/2, &decodedPayload);
-	sprintf(commandBuffer, "mac tx uncnf 1 %s\r\n", decodedPayload);
-	free(decodedPayload);
+uint8_t RN2483_TransmitUnconfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
+	char * encodedPayload;
+	if(!HexToString(data, payloadSize, &encodedPayload )){
+		return TX_FAIL;
+	}
+	//StringToHexString(data, payloadSize/2, &decodedPayload);
+	sprintf(commandBuffer, "mac tx uncnf 1 %s\r\n", encodedPayload);
+	free(encodedPayload);
 	return RN2483_TransmitProcessCommand(payloadSize + 18, receiveBuffer, bufferSize);
 }
 
-uint8_t RN2483_TransmitConfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
-	char * decodedPayload;
-	StringToHexString(data, payloadSize/2, &decodedPayload);
-	sprintf(commandBuffer, "mac tx cnf 1 %s\r\n", decodedPayload);
-	free(decodedPayload);
+uint8_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
+	char * encodedPayload;
+	if(!HexToString(data, payloadSize, &encodedPayload )){
+		return TX_FAIL;
+	}
+	sprintf(commandBuffer, "mac tx cnf 1 %s\r\n", encodedPayload);
+	free(encodedPayload);
 	return RN2483_TransmitProcessCommand(payloadSize + 17, receiveBuffer, bufferSize);
 }
 
@@ -321,4 +323,16 @@ uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer,
 		}
 	}
 	return TX_FAIL;
+}
+
+void RN2483_Wake(char * receiveBuffer, uint8_t bufferSize){
+	LEUART_Reset(LEUART0);
+	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
+	Leuart_BreakCondition();
+	setupLeuart();
+
+	sprintf(commandBuffer, "U");
+	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
+	Leuart_WaitForResponse(receiveBuffer, bufferSize);
+	DelayMs(30);
 }

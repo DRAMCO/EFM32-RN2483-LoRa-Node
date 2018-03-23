@@ -21,8 +21,6 @@
 #include <em_device.h>
 #include <em_chip.h>
 #include <em_cmu.h>
-#include <rtcdriver.h>
-#include <i2cspm.h>
 
 #include "system.h"
 
@@ -47,6 +45,9 @@ void System_Init(void){
 	// Initialize power supply management
 	PM_Init();
 
-	// ADC_Init();
-	// I2C_Init(); // kunnen we ook de si7021 gebruiken?
+	// Initialize Analog-to-Digital Conversions
+	ADC_Init_All();
+
+	// Initialize I2C bus (to interface with sensors)
+	IIC_Init();
 }

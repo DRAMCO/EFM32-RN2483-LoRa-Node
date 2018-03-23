@@ -24,37 +24,47 @@
 #include "pin_mapping.h"
 
 void PM_Init(void){
-	GPIO_PinModeSet(PM_SENSORS_PORT, PM_SENSORS_PIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN, gpioModePushPull, 0);
 	GPIO_PinModeSet(PM_RN2483_PORT, PM_RN2483_PIN, gpioModePushPull, 0);
 }
 
 void PM_Enable(PM_SubSystem_t pmss){
 	switch(pmss){
-		case PM_SENSORS: {
-			GPIO_PinOutSet(PM_SENSORS_PORT, PM_SENSORS_PIN);
+		case PM_SENS_GECKO: {
+			GPIO_PinOutSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
+		} break;
+		case PM_SENS_EXT: {
+			GPIO_PinOutSet(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
 		} break;
 		case PM_RN2483: {
 			GPIO_PinOutSet(PM_RN2483_PORT, PM_RN2483_PIN);
 		} break;
 		case PM_ALL: {
-			GPIO_PinOutSet(PM_SENSORS_PORT, PM_SENSORS_PIN);
+			GPIO_PinOutSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
+			GPIO_PinOutSet(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
 			GPIO_PinOutSet(PM_RN2483_PORT, PM_RN2483_PIN);
 		} break;
 		default: {
+			return;
 		} break;
 	}
 }
 
 void PM_Disable(PM_SubSystem_t pmss){
 	switch(pmss){
-		case PM_SENSORS: {
-			GPIO_PinOutClear(PM_SENSORS_PORT, PM_SENSORS_PIN);
+		case PM_SENS_GECKO: {
+			GPIO_PinOutClear(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
+		} break;
+		case PM_SENS_EXT: {
+			GPIO_PinOutClear(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
 		} break;
 		case PM_RN2483: {
 			GPIO_PinOutClear(PM_RN2483_PORT, PM_RN2483_PIN);
 		} break;
 		case PM_ALL: {
-			GPIO_PinOutClear(PM_SENSORS_PORT, PM_SENSORS_PIN);
+			GPIO_PinOutClear(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
+			GPIO_PinOutClear(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
 			GPIO_PinOutClear(PM_RN2483_PORT, PM_RN2483_PIN);
 		} break;
 		default: {

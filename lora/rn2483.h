@@ -47,8 +47,9 @@ bool RN2483_JoinABP(char * receiveBuffer, uint8_t bufferSize);
 bool RN2483_SetupOTAA(char * appEUI, char * appKey, char * devEUI, char * receiveBuffer, uint8_t bufferSize);
 bool RN2483_SetupABP(char * devAddr, char * appKey, char * NwkSKey, char * receiveBuffer, uint8_t bufferSize);
 uint8_t RN2483_Transmit(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
-uint8_t RN2483_TransmitUnconfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
-uint8_t RN2483_TransmitConfirmed(char * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
+uint8_t RN2483_TransmitUnconfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
+uint8_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
 uint8_t RN2483_TransmitProcessCommand(uint8_t commandSize, char * receiveBuffer, uint8_t bufferSize);
+void RN2483_Wake(char * receiveBuffer, uint8_t bufferSize);
 
 #endif /* INC_RN2483_H_ */

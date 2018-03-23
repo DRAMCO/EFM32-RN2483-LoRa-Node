@@ -34,9 +34,31 @@ bool StringStartsWith(char * str, char * seq){
 	return true;
 }
 
+bool HexToString(uint8_t * bin, uint8_t binsz, char **result ){
+	char hex_str[] = "0123456789abcdef";
+	uint8_t i;
+
+	if (!(*result = (char *)malloc(binsz * 2 + 1))){
+		return false;
+	}
+
+	(*result)[binsz * 2] = 0;
+
+	if (!binsz){
+		return false;
+	}
+
+	for (i = 0; i < binsz; i++){
+	  (*result)[i * 2 + 0] = hex_str[(bin[i] >> 4) & 0x0F];
+	  (*result)[i * 2 + 1] = hex_str[(bin[i]     ) & 0x0F];
+	}
+
+	return true;
+}
+
 char * StringToHexString(char * bin, unsigned int binsz, char **result ){
-	char     hex_str[]= "0123456789abcdef";
-	unsigned int      i;
+	char hex_str[] = "0123456789abcdef";
+	unsigned int i;
 
 	if (!(*result = (char *)malloc(binsz * 2 + 1))){
 		return (NULL);

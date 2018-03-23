@@ -53,8 +53,27 @@ LoRaStatus_t LoRa_Init(LoRaSettings_t init){
 	}
 }
 
+LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck){
+	if(ackNoAck == LORA_CONFIRMED){ // not tested yet !!
+		if(RN2483_TransmitUnconfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) == TX_FAIL){
+			return ERROR;
+		}
+		return ERROR;
+	}
+	else{
+		if(RN2483_TransmitUnconfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) == TX_FAIL){
+			return ERROR;
+		}
+		return SUCCESS;
+	}
+}
+
 void LoRa_Sleep(uint32_t durationMs){
-	RN2483_Sleep(9900, loraReceiveBuffer, LORA_BUFFERSIZE);
+	RN2483_Sleep(durationMs, loraReceiveBuffer, LORA_BUFFERSIZE);
+}
+
+void LoRa_WakeUp(void){
+	RN2483_Wake(loraReceiveBuffer, LORA_BUFFERSIZE);
 }
 
 void LoRa_DeepSleep(void){

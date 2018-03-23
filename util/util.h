@@ -25,7 +25,7 @@
 #include <stdbool.h>
 
 bool StringStartsWith(char * str, char * seq);
-
+bool HexToString(uint8_t * bin, uint8_t binsz, char **result );
 char * StringToHexString(char * bin, unsigned int binsz, char **result );
 
 #endif /* INC_UTIL_H_ */
