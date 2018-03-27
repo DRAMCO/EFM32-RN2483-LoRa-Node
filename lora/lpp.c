@@ -19,7 +19,10 @@
  */
 
 #include <stdlib.h>
+<<<<<<< HEAD
 #include <stdbool.h>
+=======
+>>>>>>> origin/tutorial
 
 #include "lpp.h"
 

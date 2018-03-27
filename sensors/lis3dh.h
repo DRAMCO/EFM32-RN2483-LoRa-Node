@@ -23,7 +23,11 @@
 
 bool Lis3dh_Init(void);
 bool Lis3dh_Detect(void);
+<<<<<<< HEAD
 bool Lis3dh_SetDataRate(uint8_t dr);
+=======
+uint8_t Lis3dh_SetDataRate(uint8_t dr);
+>>>>>>> origin/tutorial
 uint8_t Lis3dh_ReadValues(uint16_t * x, uint16_t * y, uint16_t * z);
 
 #endif /* SENSORS_LIS3DH_H_ */

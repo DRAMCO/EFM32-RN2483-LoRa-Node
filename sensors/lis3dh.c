@@ -98,6 +98,7 @@ typedef enum
 
 } lis3dh_dataRate_t;
 
+<<<<<<< HEAD
 bool Lis3dh_Init(void){
 	if(!Lis3dh_Detect()){
 		return false;
@@ -125,6 +126,76 @@ bool Lis3dh_Init(void){
 
 	// Set datarate to
 	return Lis3dh_SetDataRate(LIS3DH_DATARATE_10_HZ);;
+=======
+//int32_t Lis3dh_Read8(I2C_TypeDef *i2c, uint8_t reg_addr, uint8_t *data){
+//  I2C_TransferSeq_TypeDef    seq;
+//  I2C_TransferReturn_TypeDef ret;
+//  uint8_t                    i2c_read_data[1];
+//  uint8_t                    i2c_write_data[1];
+//
+//  seq.addr  = LIS3DH_ADDR<<1;
+//  seq.flags = I2C_FLAG_WRITE_READ;
+//  /* Select command to issue */
+//  i2c_write_data[0] = reg_addr;
+//  seq.buf[0].data   = i2c_write_data;
+//  seq.buf[0].len    = 1;
+//  /* Select location/length of data to be read */
+//  seq.buf[1].data = i2c_read_data;
+//  seq.buf[1].len  = 1;
+//
+//  ret = I2CSPM_Transfer(i2c, &seq);
+//  if (ret != i2cTransferDone){
+//    return ret;
+//  }
+//  if (NULL != data){
+//    *data = i2c_read_data[0];
+//  }
+//  return (uint32_t) i2cTransferDone;
+//}
+
+//int32_t Lis3dh_Write8(I2C_TypeDef *i2c, uint8_t reg_addr, uint8_t data){
+//  I2C_TransferSeq_TypeDef    seq;
+//  I2C_TransferReturn_TypeDef ret;
+//  uint8_t                    i2c_read_data[1];
+//  uint8_t                    i2c_write_data[2];
+//
+//  seq.addr  = LIS3DH_ADDR<<1;
+//  seq.flags = I2C_FLAG_WRITE;
+//  /* Select command to issue */
+//  i2c_write_data[0] = reg_addr;
+//  i2c_write_data[1] = data;
+//  seq.buf[0].data   = i2c_write_data;
+//  seq.buf[0].len    = 2;
+//  /* Select location/length of data to be read */
+//  seq.buf[1].data = i2c_read_data;
+//  seq.buf[1].len  = 0;
+//
+//  ret = I2CSPM_Transfer(i2c, &seq);
+//  if (ret != i2cTransferDone){
+//    return ret;
+//  }
+//
+//  return (uint32_t) 0;
+//}
+
+bool Lis3dh_Init(void){
+	if(!Lis3dh_Detect())
+		return false;
+
+	// Enable all axes, low power mode
+	//Lis3dh_Write8(i2c, LIS3DH_REG_CTRL1, 0xF);
+
+	// Enable BDU, disable high resolution
+	//Lis3dh_Write8(i2c, LIS3DH_REG_CTRL4, 0x8);
+
+	// Temperature sensor enabled
+	//Lis3dh_Write8(i2c, LIS3DH_REG_TEMPCFG, 0x40);
+
+	// Set datarate to
+	//Lis3dh_SetDataRate(i2c, LIS3DH_DATARATE_10_HZ);
+
+	return true;
+>>>>>>> origin/tutorial
 }
 
 
@@ -142,6 +213,7 @@ bool Lis3dh_Detect(void){
 	return true;
 }
 
+<<<<<<< HEAD
 
 bool Lis3dh_SetDataRate(uint8_t dr){
 	uint8_t wBuffer[2] = {LIS3DH_REG_CTRL1, 0x00};
@@ -159,6 +231,18 @@ bool Lis3dh_SetDataRate(uint8_t dr){
 }
 
 
+=======
+//
+//uint8_t Lis3dh_SetDataRate(uint8_t dr){
+//	uint8_t ctl1 = 0;
+//	Lis3dh_Read8(i2c, LIS3DH_REG_CTRL1, &ctl1);
+//	ctl1 &= ~(0xF0); // mask off bits
+//	ctl1 |= (dr << 4);
+//	return Lis3dh_Write8(i2c, LIS3DH_REG_CTRL1, ctl1);
+//}
+//
+//
+>>>>>>> origin/tutorial
 //uint8_t Lis3dh_ReadValues(void, uint16_t * x, uint16_t * y, uint16_t * z){
 //
 //

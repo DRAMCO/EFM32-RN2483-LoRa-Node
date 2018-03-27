@@ -43,6 +43,7 @@ char receiveBuffer[RECEIVE_BUFFER_SIZE];
 volatile uint8_t bufferPointer = 0;
 volatile bool receiveComplete = false;
 
+<<<<<<< HEAD:system/leuart.c
 RTCDRV_TimerID_t xTimerForTimeout;
 static volatile bool timeout = false;
 volatile uint8_t starts = 0;
@@ -52,6 +53,8 @@ void timeoutCb(RTCDRV_TimerID_t id, void *user){
 	timeout = true;
 }
 
+=======
+>>>>>>> origin/tutorial:system/leuart.c
 /** Internal function prototypes */
 static void basicTxComplete(unsigned int channel, bool primary, void *user);
 static void basicRxComplete(unsigned int channel, bool primary, void *user);
@@ -92,6 +95,7 @@ static void basicRxComplete(unsigned int channel, bool primary, void *user){
 	}
 }
 
+<<<<<<< HEAD:system/leuart.c
 static void Leuart_SendData(char * buffer, uint8_t bufferLength){
 	// Wait for sync
 	while (LEUART0->SYNCBUSY);
@@ -106,6 +110,8 @@ static void Leuart_SendData(char * buffer, uint8_t bufferLength){
 	 while(DMA_ChannelEnabled(DMA_CHANNEL_TX)); // EnterEM
 }
 
+=======
+>>>>>>> origin/tutorial:system/leuart.c
 void setupDma(void){
 	/* DMA configuration structs */
 	DMA_Init_TypeDef       dmaInit;
@@ -174,7 +180,25 @@ void setupDma(void){
 	/* Configure primary descriptor */
 	DMA_CfgDescr(DMA_CHANNEL_TX, true, &txDescrCfg);
 }
+<<<<<<< HEAD:system/leuart.c
 
+=======
+
+void sendLeuartData(char * buffer, uint8_t bufferLength){
+	// Wait for sync
+	while (LEUART0->SYNCBUSY);
+
+	DMA_ActivateBasic(DMA_CHANNEL_TX,
+	                  true,
+	                  false,
+	                  (void *)&LEUART0->TXDATA,
+	                  buffer,
+	                  (unsigned int)(bufferLength - 1));
+
+	 while(DMA_ChannelEnabled(DMA_CHANNEL_TX)); // EnterEM
+}
+
+>>>>>>> origin/tutorial:system/leuart.c
 void setupLeuart(void){
 	/* Allocate timer for Timeout detection*/
 	RTCDRV_AllocateTimer(&xTimerForTimeout);
@@ -243,6 +267,15 @@ void Leuart_Reinit(void){
 	Leuart_WaitForResponse();
 }
 
+<<<<<<< HEAD:system/leuart.c
+=======
+void Leuart_Init(void){
+	setupDma();
+	Leuart_BreakCondition();
+	setupLeuart();
+}
+
+>>>>>>> origin/tutorial:system/leuart.c
 void Leuart_BreakCondition(void){
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
 	DelayMs(20);
@@ -251,16 +284,25 @@ void Leuart_BreakCondition(void){
 	GPIO_PinOutSet(LEUART_TXPORT, LEUART_TXPIN);
 }
 
+<<<<<<< HEAD:system/leuart.c
 static bool Leuart_ResponseAvailable(void){
 	return receiveComplete;
 }
 
 void Leuart_ReadData(char * buffer, uint8_t bufferLength){
+=======
+bool Leuart_ResponseAvailable(void){
+	return receiveComplete;
+}
+
+void Leuart_ReadResponse(char * buffer, uint8_t bufferLength){
+>>>>>>> origin/tutorial:system/leuart.c
 	sprintf(buffer, "%s", receiveBuffer);
 	receiveComplete = false;
 	bufferPointer = 0;
 }
 
+<<<<<<< HEAD:system/leuart.c
 // Send a command string over the LEUART. Specifying a waitTime > 0 will result in a timeout when no command is received in time.
 Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeUp){
 	// Send data over LEUART
@@ -271,6 +313,11 @@ Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeU
 	//RTCDRV_StartTimer(xTimerForTimeout, rtcdrvTimerTypeOneshot, waitTime, (RTCDRV_Callback_t) &timeoutCb, NULL);
 	// Wait for response or timeout
 	while(!Leuart_ResponseAvailable() && !timeout && !(*wakeUp)){
+=======
+void Leuart_SendCommand(char * cb, uint8_t cbl, char * rb, uint8_t rbl){
+	sendLeuartData(cb, cbl);
+	while(!Leuart_ResponseAvailable()){
+>>>>>>> origin/tutorial:system/leuart.c
 		EMU_EnterEM2(true);
 	}
 
@@ -285,8 +332,12 @@ Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeU
 	return DATA_SENT;
 }
 
+<<<<<<< HEAD:system/leuart.c
 Leuart_Status_t Leuart_WaitForResponse(){
 	// Activate DMA
+=======
+void Leuart_WaitForResponse(char * rb, uint8_t rbl){
+>>>>>>> origin/tutorial:system/leuart.c
 	DMA_ActivateBasic(	DMA_CHANNEL_RX,
 						true,
 						false,

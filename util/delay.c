@@ -35,7 +35,10 @@
 #include <em_timer.h>
 #include <em_emu.h>
 #include <rtcdriver.h>
+<<<<<<< HEAD:util/delay.c
 #include "rtcdrv_config.h"
+=======
+>>>>>>> origin/tutorial:util/delay.c
 
 RTCDRV_TimerID_t xTimerForWakeUp;
 
