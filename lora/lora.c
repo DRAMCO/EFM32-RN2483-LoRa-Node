@@ -21,6 +21,7 @@
 #include "system.h"
 #include "lora.h"
 #include "rn2483.h"
+#include "lpp.h"
 
 #define LORA_BUFFERSIZE	64
 
@@ -28,41 +29,16 @@ char loraReceiveBuffer[LORA_BUFFERSIZE];
 
 LoRaStatus_t LoRa_Init(LoRaSettings_t init){
 	PM_Enable(PM_RN2483);
-	RN2483_Init(loraReceiveBuffer, LORA_BUFFERSIZE);
+	RN2483_Init();
 
-<<<<<<< HEAD
 	if(RN2483_Setup(init, loraReceiveBuffer, LORA_BUFFERSIZE) != JOIN_ACCEPTED){
 		return ERROR;
 	}
 	return JOINED;
-=======
-	switch(init.activationMethod){
-		case OTAA: {
-			if(RN2483_SetupOTAA(init.applicationEUI, init.applicationKey, init.deviceEUI, loraReceiveBuffer, LORA_BUFFERSIZE)){
-				return JOINED;
-			}
-			else{
-				return ERROR;
-			}
-		} break;
-		case ABP: {
-			if(RN2483_SetupABP(init.deviceAddress, init.applicationSessionKey, init.networkSessionKey, loraReceiveBuffer, LORA_BUFFERSIZE)){
-				return JOINED;
-			}
-			else{
-				return ERROR;
-			}
-		} break;
-		default:{
-			return ERROR;
-		}
-	}
->>>>>>> origin/tutorial
 }
 
 LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck){
 	if(ackNoAck == LORA_CONFIRMED){ // not tested yet !!
-<<<<<<< HEAD
 		if(RN2483_TransmitConfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) != MAC_RX){
 			return ERROR;
 		}
@@ -70,22 +46,12 @@ LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck){
 	}
 	else{
 		if(RN2483_TransmitUnconfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) != MAC_TX_OK){
-=======
-		if(RN2483_TransmitUnconfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) == TX_FAIL){
-			return ERROR;
-		}
-		return ERROR;
-	}
-	else{
-		if(RN2483_TransmitUnconfirmed(b.buffer, b.fill, loraReceiveBuffer, LORA_BUFFERSIZE) == TX_FAIL){
->>>>>>> origin/tutorial
 			return ERROR;
 		}
 		return SUCCESS;
 	}
 }
 
-<<<<<<< HEAD
 void LoRa_Sleep(uint32_t durationMs, volatile bool * wakeUp){
 	RN2483_Sleep(durationMs, wakeUp, loraReceiveBuffer, LORA_BUFFERSIZE);
 }
@@ -95,14 +61,6 @@ LoRaStatus_t LoRa_WakeUp(void){
 		return ERROR;
 	}
 	return SUCCESS;
-=======
-void LoRa_Sleep(uint32_t durationMs){
-	RN2483_Sleep(durationMs, loraReceiveBuffer, LORA_BUFFERSIZE);
-}
-
-void LoRa_WakeUp(void){
-	RN2483_Wake(loraReceiveBuffer, LORA_BUFFERSIZE);
->>>>>>> origin/tutorial
 }
 
 void LoRa_DeepSleep(void){
