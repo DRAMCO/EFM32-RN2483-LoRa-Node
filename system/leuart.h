@@ -11,15 +11,18 @@
 #define RECEIVE_BUFFER_SIZE 50
 #define COMMAND_BUFFER_SIZE 50
 
-
-void sendLeuartData(char * buffer, uint8_t bufferLength);
-void setupLeuart(void);
+typedef enum leuart_statuses{
+	TX_TIMEOUT,
+	RX_TIMEOUT,
+	DATA_SENT,
+	DATA_RECEIVED
+} Leuart_Status_t;
 
 void Leuart_Init(void);
+void Leuart_Reinit(void);
 void Leuart_BreakCondition(void);
-bool Leuart_ResponseAvailable(void);
-void Leuart_ReadResponse(char * buffer, uint8_t bufferLength);
-void Leuart_SendCommand(char * cb, uint8_t cbl, char * rb, uint8_t rbl);
-void Leuart_WaitForResponse(char * rb, uint8_t rbl);
+Leuart_Status_t Leuart_ReadResponse(char * buffer, uint8_t bufferLength);
+Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeUp);
+Leuart_Status_t Leuart_WaitForResponse();
 
 #endif /* INC_LEUART_H_ */

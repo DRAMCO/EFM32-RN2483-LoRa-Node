@@ -33,12 +33,6 @@ void IRQ_Init(void){
 }
 
 void IRQ_AttachInterrupt(void * cb, uint8_t pin){
-<<<<<<< HEAD
-	// allign address
-	//unsigned int rm = (unsigned int)cb % 4;
-	//irq[pin] = cb-rm;
-=======
->>>>>>> origin/tutorial
 	irq[pin] = cb;
 }
 
