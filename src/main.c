@@ -14,142 +14,170 @@
  * terms of that agreement.
  *
  ******************************************************************************/
+#include <stdbool.h>
 #include <stdlib.h>
-#include "em_device.h"
-#include "em_chip.h"
-#include "em_cmu.h"
-#include "em_emu.h"
-#include "em_gpio.h"
-#include "em_i2c.h"
-#include "em_adc.h"
-#include "leuart.h"
-
-#include "rtcdriver.h"
-
-#include "i2cspm.h"
-
-#include "bme280.h"
+// LoRa Communication
+#include "lora.h"
+#include "lpp.h"
+#include "my_lora_device.h"
+// Micro-controller system
+#include "system.h"
+// Sensors
 #include "lis3dh.h"
-#include "rn2483.h"
-#include "battery.h"
-#include "delay.h"
+#include "si7021.h"
 
-#define BUFFERSIZE 50
+volatile uint8_t errorNr = 0;
+volatile bool wakeUp;
+
+typedef enum app_states{
+	INIT,
+	JOIN,
+	MEASURE,
+	SEND_MEASUREMENTS,
+	SLEEP,
+	WAKE_UP
+} APP_State_t;
+
+static volatile APP_State_t appState;
+
+// Interrupt callback functions
+void PB0_Pressed(void){
+	if(appState == SLEEP){
+		LED_On();
+		wakeUp = true;
+	}
+}
+
+void LED_ERROR(uint8_t err){
+	errorNr = err;
+	while(1){
+		DelayMs(200);
+		LED_Toggle();
+	}
+}
+
+void LED_HALTED(void){
+	while(1){
+		DelayMs(2000);
+		LED_Toggle();
+	}
+}
 
 int main(void){
+	/* Application variables */
+	LoRaSettings_t loraSettings = LORA_INIT_MY_DEVICE;
+	LoRaStatus_t loraStatus;
+	LPP_Buffer_t appData;
+	uint32_t rhData;
+	int32_t tData;
+	uint32_t batteryLevel;
 
+	appState = INIT;
 
-	I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
-
-	char receiveBuffer[BUFFERSIZE];
-	memset(receiveBuffer, '\0', BUFFERSIZE);
-
-	/*char deviceEUI[] = "00E6457CE8B52C56";
-	char applicationEUI[] = "70B3D57ED00096E2";
-	char applicationKey[] = "B01931C73C3BEA2CC754343AFF3B1962";
-	*/
-
-	char deviceEUI[] = "0080DD42184A0A0B";
-	char applicationEUI[] = "70B3D57ED000A7C6";
-	char applicationKey[] = "5B115E6BAD1144DDCDA486BEC896A2CB";
-
-	uint8_t messageCounter = 0;
-
-	/*
-	char deviceAddress[] = "26011DB5";
-	char networkSessionKey[] = "9305CC461CA931F4DA4E16C9339622D0";
-	char applicationSessionKey[] = "0A95C8F1FE8BE97ADB71B799B546269A";
-	 */
-
-	/* Chip errata */
-	CHIP_Init();
-	CMU_ClockEnable(cmuClock_GPIO, true);
-	InitDelay();
-
-	DelayMs(500);
-
-	I2CSPM_Init(&i2cInit);
-
-	//GPIO_PinModeSet(gpioPortE, 10, gpioModePushPull, 1);
-	//GPIO_PinModeSet(gpioPortE, 11, gpioModePushPull, 0);
-
-	/*Lis3dh_Init(i2cInit.port);
-
-	uint8_t id = Lis3dh_ReadWhoAmI(i2cInit.port);
-
-
-	uint16_t x = 0;
-	uint16_t y = 0;
-	uint16_t z = 0;
-
-	Lis3dh_ReadValues(i2cInit.port, &x, &y, &z);
-	uint8_t blabla = 0;*/
-	Bme280_Init(i2cInit.port);
-
-
-	adcInit();
-
-	RN2483_Init(receiveBuffer, BUFFERSIZE);
-
-	DelayMs(500);
-
-	bool joined = RN2483_SetupOTAA(applicationEUI, applicationKey, deviceEUI, receiveBuffer, BUFFERSIZE);
-	//bool joined = RN2483_SetupABP(deviceAddress, applicationSessionKey, networkSessionKey, receiveBuffer, BUFFERSIZE);
+	memset(&appData, 0, sizeof(appData));
 
 	while(1){
-		Bme280_TakeForcedMeasurement(i2cInit.port);
+		switch(appState){
+			case INIT:{
+				/* Initialize the system hardware */
+				System_Init();
 
-		int32_t temperature;
-		Bme280_ReadTemperature(i2cInit.port, &temperature);
-		int16_t tempLPP = (int16_t) round((float)temperature/10);
+				// Now we can do stuff like this:
+					// Respond to button press (interrupt-based)
+				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
+					// Read the battery level
+				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
+					// Wait (in EM2)
+				DelayMs(500);
 
-		int32_t pressure;
-		Bme280_ReadPressure(i2cInit.port, &pressure);
-		int16_t pressureLPP = (int16_t) round((float)pressure/10);
+				/* Initialize sensors */
+				// 1. Temperature and relative humidity
+				PM_Enable(PM_SENS_GECKO);
+				DelayMs(20);
+				if(!Si7021_Detect()){
+					LED_ERROR(1);
+				}
+				PM_Disable(PM_SENS_GECKO);
 
-		int32_t humidity;
-		Bme280_ReadHumidity(i2cInit.port, &humidity);
-		uint8_t humidityLPP = (int8_t) (humidity*2/10);
+				// 2. Accelerometer
+				PM_Enable(PM_SENS_EXT);
+				if(!Lis3dh_Init()){
+					LED_ERROR(8);
+				}
+				//PM_Disable(PM_SENS_EXT);
 
-		uint32_t battery = checkBattery()*0.09765625; // 1.25/4096*100/0.3125
+				appState = JOIN;
+			} break;
+			case JOIN:{
+				/* Initialize LoRa communication */
+				loraStatus =  LoRa_Init(loraSettings);
+				if(loraStatus != JOINED){
+					LED_ERROR(2);
+				}
+				appState = MEASURE;
+			} break;
+			case MEASURE:{
+				/* Perform measurements */
+				// Measure temperature and relative humidity
+				PM_Enable(PM_SENS_GECKO); // turn on sensor supply voltage
+				DelayMs(20); // give sensor time to power up
+				Si7021_MeasureRHAndTemp(&rhData, &tData);
+				PM_Disable(PM_SENS_GECKO); // turn off sensor supply voltage
 
-		if(joined){
-			char payload[16];
+				// Measure battery level
+				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel);
 
-			// Temperature
-			payload[0] = 0x01;
-			payload[1] = 0x67;
-			payload[2] = (uint8_t)((tempLPP & 0x0000FF00)>>8);
-			payload[3] = (uint8_t)(tempLPP & 0x000000FF);
+				// No send these measurements
+				appState = SEND_MEASUREMENTS;
+			} break;
+			case SEND_MEASUREMENTS:{
+				/* Send measurement data to "the cloud" */
+				// Convert sensor readings to LPP format
+				int16_t tempLPP = (int16_t)(round((float)tData/100));
+				uint8_t humidityLPP = (uint8_t)(rhData/500);
+				int16_t batteryLPP = (int16_t)(round((float)batteryLevel*0.09765625));
 
-			//Humidity
-			payload[4] = 0x02;
-			payload[5] = 0x68;
-			payload[6] = humidityLPP ;
+				// Initialize and fill LPP-formatted payload
+				if(!LPP_InitBuffer(&appData, 16)){
+					LED_ERROR(3);
+				}
+				if(!LPP_AddTemperature(&appData, tempLPP)){
+					LED_ERROR(4);
+				}
+				if(!LPP_AddHumidity(&appData, humidityLPP)){
+					LED_ERROR(5);
+				}
+				if(!LPP_AddAnalog(&appData, batteryLPP)){
+					LED_ERROR(6);
+				}
 
-			//Pressure
-			payload[7] = 0x03;
-			payload[8] = 0x73;
-			payload[9] = (uint8_t)((pressureLPP & 0x0000FF00)>>8);
-			payload[10] = (uint8_t)(pressureLPP & 0x000000FF);
+				// Send LPP-formatted payload
+				if(LoRa_SendLppBuffer(appData, LORA_UNCONFIMED) != SUCCESS){
+					LED_ERROR(7);
+				}
 
-			payload[11] = '\0';
-
-			uint8_t payloadSize = 22;
-			if(messageCounter == 0){
-				payload[11] = 0x04;
-				payload[12] = 0x02;
-				payload[13] = (uint8_t)((battery & 0x0000FF00)>>8);
-				payload[14] = (uint8_t)(battery & 0x000000FF);
-				payload[15] = '\0';
-				payloadSize = 30;
-			}
-
-			RN2483_TransmitUnconfirmed(payload, payloadSize, receiveBuffer, BUFFERSIZE);
-
-			messageCounter = (messageCounter + 1)%10;
+				// Go to sleep
+				appState = SLEEP;
+			} break;
+			case SLEEP:{
+				// Sleep for a specified period of time;
+				wakeUp = false;
+				LoRa_Sleep(1800000, &wakeUp);
+				if(wakeUp){ // get out of bed early
+					appState = WAKE_UP;
+				}
+				else{ // sleep time has passed
+					appState = MEASURE;
+				}
+			} break;
+			case WAKE_UP:{
+				LoRa_WakeUp();
+				LED_Off();
+				appState = MEASURE;
+			} break;
+			default:{
+				LED_HALTED();
+			} break;
 		}
-		RN2483_Sleep(1800000, receiveBuffer, BUFFERSIZE);
 	}
-
 }
