@@ -19,9 +19,11 @@
  */
 
 #include "system.h"
-#include "lora.h"
 #include "rn2483.h"
 #include "lpp.h"
+#include "lora.h"
+
+
 
 #define LORA_BUFFERSIZE	64
 

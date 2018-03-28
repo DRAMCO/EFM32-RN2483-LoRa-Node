@@ -28,68 +28,82 @@
 char commandBuffer[RN2483_COMMANDBUFFER_SIZE];
 
 static RN2483_Status_t RN2483_ProcessMacCommand(char * receiveBuffer, uint8_t bufferSize, bool secondResponse){
-	/*bool sendDone = false;
-	uint8_t busyCounter = 0;
-	uint8_t retryCounter = 0;
+	volatile bool dummy = false;
+	if(Leuart_SendCommand(commandBuffer, strlen(commandBuffer), &dummy) == TX_TIMEOUT){
+		return RN_TX_TIMEOUT;
+	}
 
-	while(!sendDone){
-		retryCounter ++;
-		if(retryCounter > 30){
-			return TX_FAIL;
-		}
-		Leuart_SendCommand(commandBuffer, strlen(commandBuffer), receiveBuffer, bufferSize);
-		if(StringStartsWith(receiveBuffer, "ok")){
+	// read first response
+	Leuart_ReadData(receiveBuffer, bufferSize);
+
+	// analyze response
+	if(StringStartsWith(receiveBuffer, "ok")){
+		if(secondResponse){
+			// wait for second response
 			Leuart_WaitForResponse(receiveBuffer, bufferSize);
-			if(StringStartsWith(receiveBuffer, "mac_tx_ok")){
-				sendDone = true;
-				return TX_SUCCESS;
-			}else if(StringStartsWith(receiveBuffer, "mac_rx")){
-				// TODO: capture confirmation data
-				sendDone = true;
-				return TX_SUCCESS_CONFIRMED;
-			}else if(StringStartsWith(receiveBuffer, "mac_err")){
-				RN2483_Setup(receiveBuffer, bufferSize);
-			}else if(StringStartsWith(receiveBuffer, "invalid_data_len")){
-				sendDone = true;
-				return TX_FAIL;
-			}else if(StringStartsWith(receiveBuffer, "radio_tx_ok")){
-				sendDone = true;
-				return TX_SUCCESS;
-			}else if(StringStartsWith(receiveBuffer, "radio_err")){
-				RN2483_Setup(receiveBuffer, bufferSize);
+			// read second response
+			Leuart_ReadData(receiveBuffer, bufferSize);
+			// analyze response
+			if(StringStartsWith(receiveBuffer, "accepted")){
+				return JOIN_ACCEPTED;
+			} else if(StringStartsWith(receiveBuffer, "denied")){
+				return JOIN_DENIED;
+			} else if(StringStartsWith(receiveBuffer, "mac_tx_ok")){
+				return MAC_TX_OK;
+			} else if(StringStartsWith(receiveBuffer, "mac_rx")){
+				// TODO: capture data
+				return MAC_RX;
+			} else if(StringStartsWith(receiveBuffer, "mac_err")){
+				return MAC_ERR;
+			} else if(StringStartsWith(receiveBuffer, "invalid_data_len")){
+				return INVALID_DATA_LEN;
+			} else if(StringStartsWith(receiveBuffer, "radio_tx_ok")){
+				return RADIO_TX_OK;
+			} else if(StringStartsWith(receiveBuffer, "radio_err")){
+				return RADIO_ERR;
 			}
-		}else if(StringStartsWith(receiveBuffer, "invalid_param")){
-			sendDone = true;
-			return TX_FAIL;
-		}else if(StringStartsWith(receiveBuffer, "not_joined")){
-			RN2483_Setup(receiveBuffer, bufferSize);
-		}else if(StringStartsWith(receiveBuffer, "no_free_ch")){
-			DelayMs(500);
-		}else if(StringStartsWith(receiveBuffer, "silent")){
-			RN2483_Setup(receiveBuffer, bufferSize);
-		}else if(StringStartsWith(receiveBuffer, "frame_counter_err_rejoin_needed")){
-			RN2483_Setup(receiveBuffer, bufferSize);
-		}else if(StringStartsWith(receiveBuffer, "busy")){
-			busyCounter ++;
-			if(busyCounter >=10){
-				RN2483_Setup(receiveBuffer, bufferSize);
-			}else{
-				DelayMs(500);
-			}
-		}else if(StringStartsWith(receiveBuffer, "mac_paused")){
-			RN2483_Setup(receiveBuffer, bufferSize);
-		}else if(StringStartsWith(receiveBuffer, "invalid_data_len")){
-			sendDone = true;
-			return TX_FAIL;
-		}else{
-			RN2483_Setup(receiveBuffer, bufferSize);
+			return UNKOWN_ERR;
+		} else {
+			return MAC_OK;
 		}
 	}
-	return TX_FAIL;*/
+	else if(StringStartsWith(receiveBuffer, "invalid_param")){
+		return INVALID_PARAM;
+	} else if(StringStartsWith(receiveBuffer, "not_joined")){
+		return NOT_JOINED;
+	} else if(StringStartsWith(receiveBuffer, "no_free_ch")){
+		return NO_FREE_CH;
+	} else if(StringStartsWith(receiveBuffer, "silent")){
+		return SILENT;
+	} else if(StringStartsWith(receiveBuffer, "frame_counter_err_rejoin_needed")){
+		return FRAME_COUNTER_ERR_REJOIN_NEEDED;
+	} else if(StringStartsWith(receiveBuffer, "busy")){
+		return BUSY;
+	} else if(StringStartsWith(receiveBuffer, "mac_paused")){
+		return MAC_PAUSED;
+	} else if(StringStartsWith(receiveBuffer, "invalid_data_len")){
+		return INVALID_DATA_LEN;
+	}
+
+	return DATA_RETURNED;
 }
 
 static RN2483_Status_t RN2483_ProcessSleepCommand(char * receiveBuffer, uint8_t bufferSize, volatile bool * wakeUp){
+	if(Leuart_SendCommand(commandBuffer, strlen(commandBuffer), wakeUp) == TX_TIMEOUT){
+		return RN_TX_TIMEOUT;
+	}
 
+	// read first response
+	Leuart_ReadData(receiveBuffer, bufferSize);
+
+	// analyze response
+	if(StringStartsWith(receiveBuffer, "ok")){
+		return MAC_OK;
+	} else if(StringStartsWith(receiveBuffer, "invalid_param")){
+		return INVALID_PARAM;
+	}
+
+	return UNKOWN_ERR;
 }
 
 void RN2483_Init(void){ // Setup with autobaud
@@ -101,10 +115,6 @@ void RN2483_Init(void){ // Setup with autobaud
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
 
 	Leuart_Init();
-
-	sprintf(commandBuffer, "U");
-	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
-	DelayMs(20);
 }
 
 RN2483_Status_t RN2483_MacReset(char * receiveBuffer, uint8_t bufferSize){
@@ -279,7 +289,7 @@ RN2483_Status_t RN2483_SetupOTAA(LoRaSettings_t settings, char * receiveBuffer, 
 	return RN2483_JoinOTAA(receiveBuffer, bufferSize);
 }
 
-bool RN2483_SetupABP(LoRaSettings_t settings, char * receiveBuffer, uint8_t bufferSize){
+RN2483_Status_t RN2483_SetupABP(LoRaSettings_t settings, char * receiveBuffer, uint8_t bufferSize){
 	RN2483_Status_t status = RN2483_MacReset(receiveBuffer, bufferSize);
 	if(status != MAC_OK){
 		return status;
@@ -330,13 +340,15 @@ RN2483_Status_t RN2483_Sleep(uint32_t sleepTime, volatile bool * wakeUp, char * 
 }
 
 RN2483_Status_t RN2483_Wake(char * receiveBuffer, uint8_t bufferSize){
-	/*LEUART_Reset(LEUART0);
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
-	Leuart_BreakCondition();
-	setupLeuart();
+	Leuart_Reinit();
 
-	sprintf(commandBuffer, "U");
-	sendLeuartData(commandBuffer, (uint8_t) strlen(commandBuffer));
-	Leuart_WaitForResponse(receiveBuffer, bufferSize);
-	DelayMs(30);*/
+	// capture response "ok" from previous sleep command
+	Leuart_WaitForResponse();
+	// read second response
+	Leuart_ReadData(receiveBuffer, bufferSize);
+	if(StringStartsWith(receiveBuffer, "ok")){
+		return MAC_OK;
+	}
+
+	return MAC_ERR;
 }

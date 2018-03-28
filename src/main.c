@@ -111,7 +111,7 @@ int main(void){
 			} break;
 			case JOIN:{
 				/* Initialize LoRa communication */
-				loraStatus =  LoRa_Init(loraSettings);
+				loraStatus = LoRa_Init(loraSettings);
 				if(loraStatus != JOINED){
 					LED_ERROR(2);
 				}

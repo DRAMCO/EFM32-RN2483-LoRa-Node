@@ -37,6 +37,8 @@ typedef enum rn2483_statuses{
 	MAC_TX_OK,
 	MAC_RX,
 	MAC_ERR,
+	RADIO_TX_OK,
+	RADIO_ERR,
 	UNKOWN_ERR,
 	RN_TX_TIMEOUT,
 	RN_RX_TIMEOUT,
