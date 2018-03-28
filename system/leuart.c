@@ -6,15 +6,17 @@
  */
 #include <stdint.h>
 #include <stdbool.h>
-#include <rtcdriver.h>
+
 #include <em_device.h>
 #include <em_chip.h>
-#include <em_cmu.h>
 #include <em_gpio.h>
 #include <em_emu.h>
 #include <em_leuart.h>
 #include <em_dma.h>
+#include <em_cmu.h>
+
 #include <dmactrl.h>
+#include <rtcdriver.h>
 
 #include "delay.h"
 #include "util.h"
@@ -45,8 +47,6 @@ volatile bool receiveComplete = false;
 
 RTCDRV_TimerID_t xTimerForTimeout;
 static volatile bool timeout = false;
-volatile uint8_t starts = 0;
-volatile uint8_t waited = 0;
 
 void timeoutCb(RTCDRV_TimerID_t id, void *user){
 	timeout = true;
