@@ -25,7 +25,7 @@
 #include <em_device.h>
 #include <stdbool.h>
 
-typedef struct{
+typedef struct lpp_buffer{
 	uint8_t * buffer;
 	uint8_t fill;
 	uint8_t length;

@@ -21,7 +21,8 @@ typedef enum leuart_statuses{
 void Leuart_Init(void);
 void Leuart_Reinit(void);
 void Leuart_BreakCondition(void);
-Leuart_Status_t Leuart_ReadResponse(char * buffer, uint8_t bufferLength);
+
+void Leuart_ReadResponse(char * buffer, uint8_t bufferLength);
 Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeUp);
 Leuart_Status_t Leuart_WaitForResponse();
 

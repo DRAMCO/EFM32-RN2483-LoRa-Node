@@ -34,7 +34,7 @@ static RN2483_Status_t RN2483_ProcessMacCommand(char * receiveBuffer, uint8_t bu
 	}
 
 	// read first response
-	Leuart_ReadData(receiveBuffer, bufferSize);
+	Leuart_ReadResponse(receiveBuffer, bufferSize);
 
 	// analyze response
 	if(StringStartsWith(receiveBuffer, "ok")){
@@ -42,7 +42,7 @@ static RN2483_Status_t RN2483_ProcessMacCommand(char * receiveBuffer, uint8_t bu
 			// wait for second response
 			Leuart_WaitForResponse(receiveBuffer, bufferSize);
 			// read second response
-			Leuart_ReadData(receiveBuffer, bufferSize);
+			Leuart_ReadResponse(receiveBuffer, bufferSize);
 			// analyze response
 			if(StringStartsWith(receiveBuffer, "accepted")){
 				return JOIN_ACCEPTED;
@@ -94,7 +94,7 @@ static RN2483_Status_t RN2483_ProcessSleepCommand(char * receiveBuffer, uint8_t 
 	}
 
 	// read first response
-	Leuart_ReadData(receiveBuffer, bufferSize);
+	Leuart_ReadResponse(receiveBuffer, bufferSize);
 
 	// analyze response
 	if(StringStartsWith(receiveBuffer, "ok")){
@@ -321,7 +321,7 @@ RN2483_Status_t RN2483_TransmitUnconfirmed(uint8_t * data, uint8_t payloadSize, 
 	//StringToHexString(data, payloadSize/2, &decodedPayload);
 	sprintf(commandBuffer, "mac tx uncnf 1 %s\r\n", encodedPayload);
 	free(encodedPayload);
-	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
+	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, true);
 }
 
 RN2483_Status_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize){
@@ -331,12 +331,12 @@ RN2483_Status_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, ch
 	}
 	sprintf(commandBuffer, "mac tx cnf 1 %s\r\n", encodedPayload);
 	free(encodedPayload);
-	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
+	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, true);
 }
 
 RN2483_Status_t RN2483_Sleep(uint32_t sleepTime, volatile bool * wakeUp, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "sys sleep %lu\r\n", (unsigned long) sleepTime);
-	return RN2483_ProcessSleepCommand(receiveBuffer, bufferSize, false);
+	return RN2483_ProcessSleepCommand(receiveBuffer, bufferSize, wakeUp);
 }
 
 RN2483_Status_t RN2483_Wake(char * receiveBuffer, uint8_t bufferSize){
@@ -345,7 +345,7 @@ RN2483_Status_t RN2483_Wake(char * receiveBuffer, uint8_t bufferSize){
 	// capture response "ok" from previous sleep command
 	Leuart_WaitForResponse();
 	// read second response
-	Leuart_ReadData(receiveBuffer, bufferSize);
+	Leuart_ReadResponse(receiveBuffer, bufferSize);
 	if(StringStartsWith(receiveBuffer, "ok")){
 		return MAC_OK;
 	}

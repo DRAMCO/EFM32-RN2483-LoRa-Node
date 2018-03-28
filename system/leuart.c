@@ -269,7 +269,7 @@ static bool Leuart_ResponseAvailable(void){
 	return receiveComplete;
 }
 
-void Leuart_ReadData(char * buffer, uint8_t bufferLength){
+void Leuart_ReadResponse(char * buffer, uint8_t bufferLength){
 	sprintf(buffer, "%s", receiveBuffer);
 	receiveComplete = false;
 	bufferPointer = 0;
