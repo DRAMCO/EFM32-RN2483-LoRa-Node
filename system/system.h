@@ -29,6 +29,12 @@
 #include "adc.h"
 #include "iic.h"
 
+#define NONE_ON			0x00
+#define RN2483_ON		0x01
+#define SENS_GECKO_ON	0x02
+#define SENS_EXT_ON		0x04
+
 void System_Init(void);
+void System_DeepSleep(uint8_t PM_ON);
 
 #endif /* PERIPHERALS_H_ */

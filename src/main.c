@@ -30,12 +30,14 @@
 volatile uint8_t errorNr = 0;
 volatile bool wakeUp;
 
+
 typedef enum app_states{
 	INIT,
 	JOIN,
 	MEASURE,
 	SEND_MEASUREMENTS,
 	SLEEP,
+	DEEP_SLEEP,
 	WAKE_UP
 } APP_State_t;
 
@@ -47,6 +49,9 @@ void PB1_Pressed(void){
 		LED_On();
 		wakeUp = true;
 	}
+}
+
+void PB0_Pressed(void){
 }
 
 void LED_ERROR(uint8_t err){
@@ -85,6 +90,7 @@ int main(void){
 
 				// Now we can do stuff like this:
 					// Respond to button press (interrupt-based)
+				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
 				Buttons_AttachInterrupt(&PB1_Pressed, BUTTON_PB1);
 					// Read the battery level
 				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
@@ -102,9 +108,9 @@ int main(void){
 
 				// 2. Accelerometer
 				PM_Enable(PM_SENS_EXT);
-				if(!Lis3dh_Init()){
-					LED_ERROR(8);
-				}
+				//if(!Lis3dh_Init()){
+					//LED_ERROR(8);
+				//}
 				//PM_Disable(PM_SENS_EXT);
 
 				appState = JOIN;
@@ -171,10 +177,14 @@ int main(void){
 					appState = MEASURE;
 				}
 			} break;
+			case DEEP_SLEEP:{
+				// save lora settings
+				System_DeepSleep(NONE_ON);
+			} break;
 			case WAKE_UP:{
 				LoRa_WakeUp();
 				LED_Off();
-				appState = MEASURE;
+				appState = DEEP_SLEEP;
 			} break;
 			default:{
 				LED_HALTED();

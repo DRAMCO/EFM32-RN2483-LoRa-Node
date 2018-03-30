@@ -22,9 +22,12 @@
 #include <em_device.h>
 #include <em_chip.h>
 #include <em_cmu.h>
+#include <em_emu.h>
 #include <em_rmu.h>
+#include <em_leuart.h>
 
 #include "system.h"
+#include "pin_mapping.h"
 
 static bool em4WakeUp;
 
@@ -43,6 +46,9 @@ void System_Init(void){
 	/* Chip errata */
 	CHIP_Init();
 	CMU_ClockEnable(cmuClock_GPIO, true);
+
+	// Detect why the system is (re)started
+	System_GetResetSource();
 
 	// Initialize RTC for use in delay functions
 	Delay_Init();
@@ -64,6 +70,39 @@ void System_Init(void){
 
 	// Initialize I2C bus (to interface with sensors)
 	IIC_Init();
+}
+
+void System_DeepSleep(uint8_t PM_ON){
+	if((PM_ON & RN2483_ON) == RN2483_ON){
+		PM_Enable(PM_RN2483);
+	}
+	else{
+		LEUART_Reset(LEUART0);
+		PM_Disable(PM_RN2483);
+		GPIO_PinOutClear(RN2483_RESET_PORT, RN2483_RESET_PIN);
+		GPIO_PinOutClear(RN2483_RX_PORT, RN2483_RX_PIN);
+		GPIO_PinOutClear(RN2483_TX_PORT, RN2483_TX_PIN);
+	}
+	if((PM_ON & SENS_GECKO_ON) == SENS_GECKO_ON){
+		PM_Enable(PM_SENS_GECKO);
+	}
+	else{
+		PM_Disable(PM_SENS_GECKO);
+		// TODO: diable other pins
+	}
+	if((PM_ON & SENS_EXT_ON) == SENS_EXT_ON){
+		PM_Enable(PM_SENS_EXT);
+	}
+	else{
+		PM_Disable(PM_SENS_EXT);
+		// TODO: diable other pins
+	}
+
+	// TODO: enable other wakeup sources
+	// wakeup on low level of PB0
+	GPIO_EM4EnablePinWakeup(GPIO_EM4WUEN_EM4WUEN_C9, 0);
+	EMU_EnterEM4();
+
 }
 
 bool System_EM4WakeUp(){

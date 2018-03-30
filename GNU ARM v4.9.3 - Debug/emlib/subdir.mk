@@ -12,6 +12,7 @@ C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_gpio.c \
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_i2c.c \
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_leuart.c \
+C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_rmu.c \
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_rtc.c \
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_system.c \
 C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_usart.c 
@@ -25,6 +26,7 @@ OBJS += \
 ./emlib/em_gpio.o \
 ./emlib/em_i2c.o \
 ./emlib/em_leuart.o \
+./emlib/em_rmu.o \
 ./emlib/em_rtc.o \
 ./emlib/em_system.o \
 ./emlib/em_usart.o 
@@ -38,6 +40,7 @@ C_DEPS += \
 ./emlib/em_gpio.d \
 ./emlib/em_i2c.d \
 ./emlib/em_leuart.d \
+./emlib/em_rmu.d \
 ./emlib/em_rtc.d \
 ./emlib/em_system.d \
 ./emlib/em_usart.d 
@@ -97,6 +100,13 @@ emlib/em_leuart.o: C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_s
 	@echo 'Building file: $<'
 	@echo 'Invoking: GNU ARM C Compiler'
 	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -std=c99 '-DDEBUG=1' '-DEFM32HG322F64=1' -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emdrv/common/inc" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emdrv/rtcdrv/inc" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/common/bsp" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emlib/inc" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\util" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\lora" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\system" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\sensors" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -MMD -MP -MF"emlib/em_leuart.d" -MT"emlib/em_leuart.o" -o "$@" "$<"
+	@echo 'Finished building: $<'
+	@echo ' '
+
+emlib/em_rmu.o: C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2/platform/emlib/src/em_rmu.c
+	@echo 'Building file: $<'
+	@echo 'Invoking: GNU ARM C Compiler'
+	arm-none-eabi-gcc -g -gdwarf-2 -mcpu=cortex-m0plus -mthumb -std=c99 '-DDEBUG=1' '-DEFM32HG322F64=1' -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emdrv/common/inc" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emdrv/rtcdrv/inc" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/common/drivers" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/CMSIS/Include" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/SLSTK3400A_EFM32HG/config" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//hardware/kit/common/bsp" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/Device/SiliconLabs/EFM32HG/Include" -I"C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/gecko_sdk_suite/v2.2//platform/emlib/inc" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\util" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\lora" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\system" -I"C:\Users\geoffrey\SimplicityStudio\v4_workspace\EFM32-RN2483-LoRa-Node\sensors" -O0 -Wall -c -fmessage-length=0 -mno-sched-prolog -fno-builtin -ffunction-sections -fdata-sections -MMD -MP -MF"emlib/em_rmu.d" -MT"emlib/em_rmu.o" -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 
