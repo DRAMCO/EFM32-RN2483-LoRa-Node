@@ -173,6 +173,7 @@ void setupLeuart(void){
 
   /* Configure LEUART */
   init.enable = leuartDisable;
+  init.baudrate = 4800;
 
   LEUART_Init(LEUART0, &init);
 

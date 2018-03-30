@@ -60,15 +60,12 @@ int main(void){
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	InitDelay();
 
-
-
 	DelayMs(100);
 
 	I2CSPM_Init(&i2cInit);
 
 #ifdef SHAKESENSOR
 	GPIO_PinModeSet(gpioPortC, 8, gpioModePushPull, 1);
-	GPIO_PinOutSet(gpioPortC, 8);
 	Lis3dh_Init(i2cInit.port);
 	Lis3dh_InitShakeDetection(i2cInit.port);
 #endif
@@ -77,7 +74,7 @@ int main(void){
 	Bme280_Init(i2cInit.port);
 #endif
 
-	adcInit();
+	Battery_Init();
 	RN2483_Init(receiveBuffer, BUFFERSIZE);
 	DelayMs(500);
 
@@ -127,7 +124,7 @@ int main(void){
 		Bme280_ReadHumidity(i2cInit.port, &humidity);
 		uint8_t humidityLPP = (int8_t) (humidity*2/10);
 
-		uint32_t battery = checkBattery()*0.09765625; // 1.25/4096*100/0.3125
+		uint32_t battery = Battery_Read()*0.09765625; // 1.25/4096*100/0.3125
 
 		if(joined){
 			char payload[16];

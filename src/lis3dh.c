@@ -96,16 +96,17 @@ bool Lis3dh_Init(I2C_TypeDef *i2c){
 		return false;
 
 	// Enable all axes, low power mode
-	Lis3dh_Write8(i2c, LIS3DH_REG_CTRL1, 0xF);
+	Lis3dh_Write8(i2c, LIS3DH_REG_CTRL1, 0x2F);
 
 	// Enable BDU, disable high resolution
 	Lis3dh_Write8(i2c, LIS3DH_REG_CTRL4, 0x80);
 
-	// Temperature sensor enabled
-	Lis3dh_Write8(i2c, LIS3DH_REG_TEMPCFG, 0x40);
+	// Temperature sensor disabled
+	Lis3dh_Write8(i2c, LIS3DH_REG_TEMPCFG, 0x00);
 
 	// Set datarate to
-	Lis3dh_SetDataRate(i2c, LIS3DH_DATARATE_10_HZ);
+	//Lis3dh_SetDataRate(i2c, LIS3DH_DATARATE_10_HZ);
+	Lis3dh_Write8(i2c, LIS3DH_REG_CTRL1, 0x2F);
 
 	return true;
 }
