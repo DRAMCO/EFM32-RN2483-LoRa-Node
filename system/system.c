@@ -18,14 +18,28 @@
  *  Description: TODO
  */
 
+#include <stdbool.h>
 #include <em_device.h>
 #include <em_chip.h>
 #include <em_cmu.h>
+#include <em_rmu.h>
 
 #include "system.h"
 
+static bool em4WakeUp;
+
+static void System_GetResetSource(void){
+	// Get reset cause(s)
+	uint32_t rflags = RMU_ResetCauseGet();
+	if (rflags & RMU_RSTCAUSE_EM4WURST){
+		em4WakeUp = true;
+	}
+	RMU_ResetCauseClear();
+}
 
 void System_Init(void){
+	em4WakeUp = false;
+
 	/* Chip errata */
 	CHIP_Init();
 	CMU_ClockEnable(cmuClock_GPIO, true);
@@ -50,4 +64,8 @@ void System_Init(void){
 
 	// Initialize I2C bus (to interface with sensors)
 	IIC_Init();
+}
+
+bool System_EM4WakeUp(){
+	return em4WakeUp;
 }

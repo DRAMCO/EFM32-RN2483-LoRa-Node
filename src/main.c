@@ -42,7 +42,7 @@ typedef enum app_states{
 static volatile APP_State_t appState;
 
 // Interrupt callback functions
-void PB0_Pressed(void){
+void PB1_Pressed(void){
 	if(appState == SLEEP){
 		LED_On();
 		wakeUp = true;
@@ -85,7 +85,7 @@ int main(void){
 
 				// Now we can do stuff like this:
 					// Respond to button press (interrupt-based)
-				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
+				Buttons_AttachInterrupt(&PB1_Pressed, BUTTON_PB1);
 					// Read the battery level
 				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
 					// Wait (in EM2)

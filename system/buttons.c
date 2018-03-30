@@ -18,6 +18,7 @@
  *  Description: TODO
  */
 
+#include <stdbool.h>
 #include <em_gpio.h>
 
 #include "irq.h"

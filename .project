@@ -81,6 +81,11 @@
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_leuart.c</locationURI>
 		</link>
 		<link>
+			<name>emlib/em_rmu.c</name>
+			<type>1</type>
+			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_rmu.c</locationURI>
+		</link>
+		<link>
 			<name>emlib/em_rtc.c</name>
 			<type>1</type>
 			<locationURI>STUDIO_SDK_LOC/platform/emlib/src/em_rtc.c</locationURI>
