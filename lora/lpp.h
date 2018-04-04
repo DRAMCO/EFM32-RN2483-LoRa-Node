@@ -39,5 +39,6 @@ bool LPP_AddAnalog(LPP_Buffer_t *b, int16_t data);
 bool LPP_AddTemperature(LPP_Buffer_t *b, int16_t data);
 bool LPP_AddHumidity(LPP_Buffer_t *b, uint8_t data);
 bool LPP_AddAccelerometer(LPP_Buffer_t *b, int16_t x, int16_t y, int16_t z);
+bool LPP_AddPressure(LPP_Buffer_t *b, uint16_t data);
 
 #endif /* LORA_LPP_H_ */

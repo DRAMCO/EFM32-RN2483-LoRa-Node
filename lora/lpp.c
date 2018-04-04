@@ -29,6 +29,7 @@
 #define LPP_TEMPERATURE				0x67
 #define LPP_HUMIDITY				0x68
 #define LPP_ACCELEROMETER			0x71
+#define LPP_PRESSURE				0x73
 
 // lpp data sizes
 #define LPP_DIGITAL_INPUT_SIZE		0x03
@@ -36,6 +37,7 @@
 #define LPP_TEMPERATURE_SIZE		0x04
 #define LPP_HUMIDITY_SIZE			0x03
 #define LPP_ACCELEROMETER_SIZE		0x08
+#define LPP_PRESSURE_SIZE			0x04
 
 // lpp channel ids
 #define LPP_DIGITAL_INPUT_CHANNEL	0x01
@@ -43,6 +45,7 @@
 #define LPP_TEMPERATURE_CHANNEL		0x03
 #define LPP_HUMIDITY_CHANNEL		0x04
 #define LPP_ACCELEROMETER_CHANNEL	0x05
+#define LPP_PRESSURE_CHANNEL		0x06
 
 bool LPP_InitBuffer(LPP_Buffer_t *b, uint8_t size){
 	LPP_ClearBuffer(b);
@@ -132,6 +135,20 @@ bool LPP_AddAccelerometer(LPP_Buffer_t *b, int16_t x, int16_t y, int16_t z){
 	b->buffer[b->fill++] = (uint8_t)(0x00FF & y);
 	b->buffer[b->fill++] = (uint8_t)((0xFF00 & z) >> 8);
 	b->buffer[b->fill++] = (uint8_t)(0x00FF & z);
+
+	return true;
+}
+
+bool LPP_AddPressure(LPP_Buffer_t *b, uint16_t data){
+	uint8_t space = b->length - b->fill;
+	if(space < LPP_PRESSURE_SIZE){
+		return false;
+	}
+
+	b->buffer[b->fill++] = LPP_PRESSURE_CHANNEL;
+	b->buffer[b->fill++] = LPP_PRESSURE;
+	b->buffer[b->fill++] = (uint8_t)((0xFF00 & data) >> 8);
+	b->buffer[b->fill++] = (uint8_t)(0x00FF & data);
 
 	return true;
 }
