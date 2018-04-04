@@ -29,33 +29,43 @@
 
 volatile bool adcConversionComplete = false;
 
-void ADC_Init_All(void){
-	ADC_Init_Measurement(BATTERY_LEVEL);
-	// add other
-}
+ADC_Init_TypeDef       init       = ADC_INIT_DEFAULT;
+ADC_InitSingle_TypeDef initSingle = ADC_INITSINGLE_DEFAULT;
 
-ADC_Status_t ADC_Init_Measurement(ADC_Measurement_t measurement){
-	// For now, we only support battery level measurements
-	if(measurement != BATTERY_LEVEL){
-		return ADC_WRONG_CHANNEL;
-	}
+static float32_t ConvertToCelsius(int32_t adcSample);
 
-	ADC_Init_TypeDef       init       = ADC_INIT_DEFAULT;
-	ADC_InitSingle_TypeDef initSingle = ADC_INITSINGLE_DEFAULT;
-
+void ADC_InitChannels(void){
 	/* Enable ADC clock */
 	CMU_ClockEnable(cmuClock_ADC0, true);
+}
+
+static ADC_Status_t ADC_StartMeasurement(ADC_Measurement_t measurement){
+	//initSingle.acqTime = adcAcqTime16;
+
+	ADC_Reset(ADC0);
+
+	init.timebase = ADC_TimebaseCalc(0);
+	init.prescale = ADC_PrescaleCalc(400000, 0);
 
 	/* Initiate ADC peripheral */
 	ADC_Init(ADC0, &init);
 
-	/* Setup single conversions for internal VDD/3 */
-	initSingle.acqTime = adcAcqTime16;
-	initSingle.input   = adcSingleInputCh1;
+	switch(measurement){
+		case BATTERY_LEVEL: {
+			initSingle.input = adcSingleInpVDDDiv3; // vbat/3
+		} break;
+		case INTERNAL_TEMPERATURE: {
+			initSingle.input = adcSingleInpTemp;
+		} break;
+		default: {
+			return ADC_WRONG_CHANNEL;
+		}
+	}
+
 	ADC_InitSingle(ADC0, &initSingle);
 
 	/* Manually set some calibration values */
-	ADC0->CAL = (0x7C << _ADC_CAL_SINGLEOFFSET_SHIFT) | (0x1F << _ADC_CAL_SINGLEGAIN_SHIFT);
+	//ADC0->CAL = (0x7C << _ADC_CAL_SINGLEOFFSET_SHIFT) | (0x1F << _ADC_CAL_SINGLEGAIN_SHIFT);
 
 	/* Enable interrupt on completed conversion */
 	ADC_IntEnable(ADC0, ADC_IEN_SINGLE);
@@ -65,17 +75,33 @@ ADC_Status_t ADC_Init_Measurement(ADC_Measurement_t measurement){
 	return ADC_DONE;
 }
 
-ADC_Status_t ADC_Get_Measurement(ADC_Measurement_t measurement, uint32_t * value){
-	// For now, we only support battery level measurements
-	if(measurement != BATTERY_LEVEL){
-		return ADC_WRONG_CHANNEL;
-	}
-
+static ADC_Status_t ADC_GetMeasurement(ADC_Measurement_t measurement, uint32_t * value){
 	/* Sample ADC */
 	adcConversionComplete = false;
 	ADC_Start(ADC0, adcStartSingle);
+
 	while (!adcConversionComplete) EMU_EnterEM1();
-	* value = ADC_DataSingleGet(ADC0);
+	uint32_t val = ADC_DataSingleGet(ADC0);
+
+	if(measurement == BATTERY_LEVEL){
+		float32_t fv = val * 3.75 / 4.096;
+		*value = (uint32_t) fv;
+	}
+	if(measurement == INTERNAL_TEMPERATURE){
+		float32_t ft = ConvertToCelsius(val)*1000;
+		*value = (uint32_t) ft;
+	}
+
+	return ADC_DONE;
+}
+
+ADC_Status_t ADC_Measure(ADC_Measurement_t measurement, uint32_t * value){
+	if(ADC_StartMeasurement(measurement) != ADC_DONE){
+		return ADC_ERROR;
+	}
+	if(ADC_GetMeasurement(measurement, value) != ADC_DONE){
+		return ADC_ERROR;
+	}
 	return ADC_DONE;
 }
 
@@ -87,4 +113,23 @@ void ADC0_IRQHandler(void){
   ADC_IntClear(ADC0, flags);
 
   adcConversionComplete = true;
+}
+
+static float32_t ConvertToCelsius(int32_t adcSample)
+{
+  float32_t temp;
+
+  /* Factory calibration temperature from device information page. */
+  int32_t cal_temp_0 = ((DEVINFO->CAL & _DEVINFO_CAL_TEMP_MASK)
+                        >> _DEVINFO_CAL_TEMP_SHIFT);
+  /* Factory calibration value from device information page. */
+  int32_t cal_value_0 = ((DEVINFO->ADC0CAL2 & _DEVINFO_ADC0CAL2_TEMP1V25_MASK)
+                         >> _DEVINFO_ADC0CAL2_TEMP1V25_SHIFT);
+
+  /* Temperature gradient (from datasheet) */
+  float32_t t_grad = -6.27;
+
+  temp = (cal_temp_0 - ((cal_value_0 - adcSample) / t_grad));
+
+  return temp;
 }

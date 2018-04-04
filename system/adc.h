@@ -24,21 +24,24 @@
 #include <em_device.h>
 
 typedef enum adc_measurements{
-	BATTERY_LEVEL
+	BATTERY_LEVEL,
+	INTERNAL_TEMPERATURE
 } ADC_Measurement_t;
 
 typedef enum adc_statuses{
 	ADC_DONE,
 	ADC_BUSY,
 	ADC_TIMEOUT,
+	ADC_ERROR,
 	ADC_WRONG_CHANNEL
 } ADC_Status_t;
 
 // Quick way to initialize all necessary channels/conversions
-void ADC_Init_All(void);
+void ADC_InitChannels(void);
 
-ADC_Status_t ADC_Init_Measurement(ADC_Measurement_t measurement);
+//ADC_Status_t ADC_Init_Measurement(ADC_Measurement_t measurement);
 
-ADC_Status_t ADC_Get_Measurement(ADC_Measurement_t measurement, uint32_t * value);
+//ADC_Status_t ADC_Get_Measurement(ADC_Measurement_t measurement, uint32_t * value);
+ADC_Status_t ADC_Measure(ADC_Measurement_t measurement, uint32_t * value);
 
 #endif /* SYSTEM_ADC_H_ */

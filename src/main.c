@@ -98,7 +98,7 @@ int main(void){
 				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
 				Buttons_AttachInterrupt(&PB1_Pressed, BUTTON_PB1);
 					// Read the battery level
-				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
+				ADC_Measure(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
 					// Wait (in EM2)
 				DelayMs(500);
 
@@ -112,7 +112,7 @@ int main(void){
 				PM_Disable(PM_SENS_GECKO);
 
 				// 2. Accelerometer
-				PM_Enable(PM_SENS_EXT);
+				/*PM_Enable(PM_SENS_EXT);
 				DelayMs(20);
 				if(!Lis3dh_Init()){
 					LED_ERROR(8);
@@ -120,7 +120,7 @@ int main(void){
 				if(!Lis3dh_InitShakeDetection()){
 					LED_ERROR(9);
 				}
-				Lis3dh_AttachInterrupt(&Acc_Wake);
+				Lis3dh_AttachInterrupt(&Acc_Wake);*/
 				//PM_Disable(PM_SENS_EXT);
 
 				appState = JOIN;
@@ -142,7 +142,7 @@ int main(void){
 				PM_Disable(PM_SENS_GECKO); // turn off sensor supply voltage
 
 				// Measure battery level
-				ADC_Get_Measurement(BATTERY_LEVEL, &batteryLevel);
+				ADC_Measure(BATTERY_LEVEL, &batteryLevel);
 
 				// No send these measurements
 				appState = SEND_MEASUREMENTS;
@@ -152,7 +152,7 @@ int main(void){
 				// Convert sensor readings to LPP format
 				int16_t tempLPP = (int16_t)(round((float)tData/100));
 				uint8_t humidityLPP = (uint8_t)(rhData/500);
-				int16_t batteryLPP = (int16_t)(round((float)batteryLevel*0.09765625));
+				int16_t batteryLPP = (int16_t)(round((float)batteryLevel/10));
 
 				// Initialize and fill LPP-formatted payload
 				if(!LPP_InitBuffer(&appData, 16)){
@@ -179,7 +179,7 @@ int main(void){
 			case SLEEP:{
 				// Sleep for a specified period of time;
 				wakeUp = false;
-				LoRa_Sleep(1800000, &wakeUp);
+				LoRa_Sleep(60000, &wakeUp);
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}

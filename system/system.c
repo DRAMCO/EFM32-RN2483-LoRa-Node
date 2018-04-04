@@ -66,7 +66,7 @@ void System_Init(void){
 	PM_Init();
 
 	// Initialize Analog-to-Digital Conversions
-	ADC_Init_All();
+	ADC_InitChannels();
 
 	// Initialize I2C bus (to interface with sensors)
 	IIC_Init();
