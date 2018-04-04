@@ -26,6 +26,7 @@
 // Sensors
 #include "lis3dh.h"
 #include "si7021.h"
+#include "bme280.h"
 
 //#define DEEP_SLEEP_SENS_ON
 
