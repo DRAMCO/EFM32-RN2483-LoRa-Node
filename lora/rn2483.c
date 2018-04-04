@@ -209,12 +209,9 @@ RN2483_Status_t RN2483_EnableAdaptiveDataRate(char * receiveBuffer, uint8_t buff
 	sprintf(commandBuffer, "mac set adr on\r\n");
 	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
 }
+
 RN2483_Status_t RN2483_SetBatteryLevel(uint8_t battery, char * receiveBuffer, uint8_t bufferSize){
 	sprintf(commandBuffer, "mac set bat %i\r\n", battery);
-	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
-}
-RN2483_Status_t RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize){
-	sprintf(commandBuffer, "mac save\r\n");
 	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
 }
 
@@ -332,6 +329,16 @@ RN2483_Status_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, ch
 	sprintf(commandBuffer, "mac tx cnf 1 %s\r\n", encodedPayload);
 	free(encodedPayload);
 	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, true);
+}
+
+RN2483_Status_t RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize){
+	sprintf(commandBuffer, "mac save\r\n");
+	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
+}
+
+RN2483_Status_t RN2483_ResumeMac(char * receiveBuffer, uint8_t bufferSize){
+	sprintf(commandBuffer, "mac resume\r\n");
+	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, false);
 }
 
 RN2483_Status_t RN2483_Sleep(uint32_t sleepTime, volatile bool * wakeUp, char * receiveBuffer, uint8_t bufferSize){

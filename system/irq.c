@@ -56,4 +56,9 @@ void GPIO_EVEN_IRQHandler(void){
   		if (irq[PB1_PIN] != NULL)
   			irq[PB1_PIN]();
   	}
+
+  	if(irq_pins & (1 << LIS3DH_INT_PIN)){
+  		if (irq[LIS3DH_INT_PIN] != NULL)
+  			irq[LIS3DH_INT_PIN]();
+  	}
 }

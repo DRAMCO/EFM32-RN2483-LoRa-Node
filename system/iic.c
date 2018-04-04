@@ -19,6 +19,7 @@
  */
 
 #include <i2cspm.h>
+#include <em_i2c.h>
 
 #include "iic.h"
 
@@ -26,6 +27,10 @@ I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
 
 void IIC_Init(void){
 	I2CSPM_Init(&i2cInit);
+}
+
+void IIC_Reset(void){
+	I2C_Reset(i2cInit.port);
 }
 
 bool IIC_WriteBuffer(uint8_t iicAddress, uint8_t * wBuffer, uint8_t wLength){

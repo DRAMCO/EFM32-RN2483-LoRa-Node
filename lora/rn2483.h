@@ -61,7 +61,6 @@ RN2483_Status_t RN2483_SetOutputPower(uint8_t pwr, char * receiveBuffer, uint8_t
 RN2483_Status_t RN2483_DisableAdaptiveDataRate(char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_DisableAutomaticReplies(char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_SetDataRate(uint8_t dr, char * receiveBuffer, uint8_t bufferSize);
-RN2483_Status_t RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_JoinOTAA(char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_JoinABP(char * receiveBuffer, uint8_t bufferSize);
 
@@ -70,6 +69,9 @@ RN2483_Status_t RN2483_SetupOTAA(LoRaSettings_t settings, char * receiveBuffer, 
 RN2483_Status_t RN2483_SetupABP(LoRaSettings_t settings, char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_TransmitUnconfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_TransmitConfirmed(uint8_t * data, uint8_t payloadSize, char * receiveBuffer, uint8_t bufferSize);
+
+RN2483_Status_t RN2483_SaveMac(char * receiveBuffer, uint8_t bufferSize);
+RN2483_Status_t RN2483_ResumeMac(char * receiveBuffer, uint8_t bufferSize);
 
 RN2483_Status_t RN2483_Sleep(uint32_t sleepTime, volatile bool * wakeUp, char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_Wake(char * receiveBuffer, uint8_t bufferSize);

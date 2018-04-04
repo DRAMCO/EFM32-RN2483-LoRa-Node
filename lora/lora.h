@@ -59,6 +59,4 @@ LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck);
 void LoRa_Sleep(uint32_t durationMs, volatile bool * wakeUp);
 LoRaStatus_t LoRa_WakeUp(void);
 
-void LoRa_DeepSleep(void);
-
 #endif /* LORA_LORA_H_ */

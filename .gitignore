@@ -46,8 +46,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-GNU ARM v4.9.3 - Debug/*
-GNU ARM v4.9.3 - Debug/**/*
+GNU ARM v* - Debug/*
+GNU ARM v* - Debug/**/*
+GNU ARM v* - Release/*
+GNU ARM v* - Release/**/*
 *.prefs
 .project
 *.cproject

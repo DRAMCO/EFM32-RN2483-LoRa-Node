@@ -73,6 +73,10 @@ void System_Init(void){
 }
 
 void System_DeepSleep(uint8_t PM_ON){
+	// Disable SI7021 power
+	PM_Disable(PM_SENS_GECKO);
+
+	// Check if we need to keep RN2483 power on
 	if((PM_ON & RN2483_ON) == RN2483_ON){
 		PM_Enable(PM_RN2483);
 	}
@@ -83,24 +87,27 @@ void System_DeepSleep(uint8_t PM_ON){
 		GPIO_PinOutClear(RN2483_RX_PORT, RN2483_RX_PIN);
 		GPIO_PinOutClear(RN2483_TX_PORT, RN2483_TX_PIN);
 	}
-	if((PM_ON & SENS_GECKO_ON) == SENS_GECKO_ON){
-		PM_Enable(PM_SENS_GECKO);
-	}
-	else{
-		PM_Disable(PM_SENS_GECKO);
-		// TODO: diable other pins
-	}
+
+	// Check if we need to keep external power on
 	if((PM_ON & SENS_EXT_ON) == SENS_EXT_ON){
 		PM_Enable(PM_SENS_EXT);
 	}
 	else{
 		PM_Disable(PM_SENS_EXT);
-		// TODO: diable other pins
+		IIC_Reset();
+		GPIO_PinModeSet(gpioPortD, 6, gpioModePushPull, 0);
+		GPIO_PinModeSet(gpioPortD, 7, gpioModePushPull, 0);
 	}
 
-	// TODO: enable other wakeup sources
-	// wakeup on low level of PB0
-	GPIO_EM4EnablePinWakeup(GPIO_EM4WUEN_EM4WUEN_C9, 0);
+	// Check what wake-up sources we need to enable
+	if((PM_ON & SENS_EXT_ON) == SENS_EXT_ON){
+		// wakeup on low level of PB0 & wakeup on low level of PF2
+		GPIO_EM4EnablePinWakeup(GPIO_EM4WUEN_EM4WUEN_C9 | GPIO_EM4WUEN_EM4WUEN_F2, 0);
+	}
+	else{
+		// only wakeup on low level of PB0
+		GPIO_EM4EnablePinWakeup(GPIO_EM4WUEN_EM4WUEN_C9, 0);
+	}
 	EMU_EnterEM4();
 
 }

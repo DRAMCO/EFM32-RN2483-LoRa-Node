@@ -22,9 +22,11 @@
 #include <em_device.h>
 
 #include "iic.h"
+#include "irq.h"
 #include "lis3dh.h"
+#include "pin_mapping.h"
 
-#define LIS3DH_IIC_ADDRESS  (0x18<<1)
+#define LIS3DH_IIC_ADDRESS  (0x19<<1)
 
 #define LIS3DH_REG_STATUS1       0x07
 #define LIS3DH_REG_OUTADC1_L     0x08
@@ -116,15 +118,8 @@ bool Lis3dh_Init(void){
 		return false;
 	}
 
-	// Temperature sensor enabled
-	wBuffer[0] = LIS3DH_REG_TEMPCFG;
-	wBuffer[1] = 0x40;
-	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
-		return false;
-	}
-
 	// Set datarate to
-	return Lis3dh_SetDataRate(LIS3DH_DATARATE_10_HZ);;
+	return Lis3dh_SetDataRate(LIS3DH_DATARATE_10_HZ);
 }
 
 
@@ -152,38 +147,76 @@ bool Lis3dh_SetDataRate(uint8_t dr){
 	}
 
 	uint8_t ctl1 = rBuffer[0];
-	ctl1 &= ~(0xF0); // mask off bits
+	ctl1 &= (0x0F); // mask off bits
 	ctl1 |= (dr << 4);
 	wBuffer[1] = ctl1;
-	return IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2);
+	if(IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2) != true){
+		return false;
+	}
+	IIC_WriteReadBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 1, rBuffer, 1);
+
+	return true;
 }
 
-//uint8_t Lis3dh_ReadValues(void, uint16_t * x, uint16_t * y, uint16_t * z){
-//
-//
-//	I2C_TransferSeq_TypeDef    seq;
-//	I2C_TransferReturn_TypeDef ret;
-//	uint8_t                    i2c_read_data[6];
-//	uint8_t                    i2c_write_data[1];
-//
-//	seq.addr  = LIS3DH_ADDR<<1;
-//	seq.flags = I2C_FLAG_WRITE_READ;
-//	/* Select command to issue */
-//	i2c_write_data[0] = LIS3DH_REG_OUT_X_L | 0x80; // 0x80 for autoincrement
-//	seq.buf[0].data   = i2c_write_data;
-//	seq.buf[0].len    = 1;
-//	/* Select location/length of data to be read */
-//	seq.buf[1].data = i2c_read_data;
-//	seq.buf[1].len  = 6;
-//
-//	ret = I2CSPM_Transfer(i2c, &seq);
-//	if (ret != i2cTransferDone){
-//		return ret;
-//	}
-//	*x = i2c_read_data[0] | i2c_read_data[1] << 8;
-//	*y = i2c_read_data[2] | i2c_read_data[3] << 8;
-//	*z = i2c_read_data[4] | i2c_read_data[5] << 8;
-//
-//	return (uint32_t) i2cTransferDone;
-//
-//}
+bool Lis3dh_InitShakeDetection(void){
+	// Enable IA1 to INT1
+	uint8_t wBuffer[2] = {LIS3DH_REG_CTRL3, 0x40};
+	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
+		return false;
+	}
+	// Enable interrupt on Y and X high values
+	wBuffer[0] = LIS3DH_REG_INT1CFG;
+	wBuffer[1] = 0x0A;
+	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
+		return false;
+	}
+	// Clear interrupt sources
+	wBuffer[0] = LIS3DH_REG_INT1SRC;
+	wBuffer[1] = 0x00;
+	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
+		return false;
+	}
+	// Set threshold to 512mg (0x20 * 1LSB, 1LSB = 16mg)
+	wBuffer[0] = LIS3DH_REG_INT1THS;
+	wBuffer[1] = 0x20;
+	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
+		return false;
+	}
+	// Clear minimum duration
+	wBuffer[0] = LIS3DH_REG_INT1DUR;
+	wBuffer[1] = 0x04;
+	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
+		return false;
+	}
+
+	GPIO_PinModeSet(LIS3DH_INT_PORT, LIS3DH_INT_PIN, gpioModeInput, 0);
+	GPIO_ExtIntConfig(LIS3DH_INT_PORT, LIS3DH_INT_PIN, LIS3DH_INT_PIN, false, true, true);
+	GPIO_IntClear(1	<< LIS3DH_INT_PIN);	// Clear pending interrupts
+
+	return true;
+}
+
+bool Lis3dh_ReadValues(uint16_t * x, uint16_t * y, uint16_t * z){
+	uint8_t rBuffer[6];
+	uint8_t wBuffer[1] = {LIS3DH_REG_OUT_X_L | 0x80}; // 0x80 for autoincrement
+
+	if(IIC_WriteReadBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 1, rBuffer, 6) != true){
+		return false;
+	}
+
+	*x = rBuffer[0] | rBuffer[1] << 8;
+	*y = rBuffer[2] | rBuffer[3] << 8;
+	*z = rBuffer[4] | rBuffer[5] << 8;
+
+	return true;
+}
+
+void Lis3dh_DisableInterruptPin(void){
+	GPIO_ExtIntConfig(LIS3DH_INT_PORT, LIS3DH_INT_PIN, LIS3DH_INT_PIN, false, true, false);
+	GPIO_IntClear(1	<< LIS3DH_INT_PIN);	// Clear pending interrupts
+	GPIO_PinModeSet(LIS3DH_INT_PORT, LIS3DH_INT_PIN, gpioModePushPull, 0);
+}
+
+void Lis3dh_AttachInterrupt(void * cb){
+	IRQ_AttachInterrupt(cb, LIS3DH_INT_PIN);
+}

@@ -27,9 +27,10 @@
 #include "lis3dh.h"
 #include "si7021.h"
 
+//#define DEEP_SLEEP_SENS_ON
+
 volatile uint8_t errorNr = 0;
 volatile bool wakeUp;
-
 
 typedef enum app_states{
 	INIT,
@@ -52,6 +53,9 @@ void PB1_Pressed(void){
 }
 
 void PB0_Pressed(void){
+}
+
+void Acc_Wake(void){
 }
 
 void LED_ERROR(uint8_t err){
@@ -108,9 +112,14 @@ int main(void){
 
 				// 2. Accelerometer
 				PM_Enable(PM_SENS_EXT);
-				//if(!Lis3dh_Init()){
-					//LED_ERROR(8);
-				//}
+				DelayMs(20);
+				if(!Lis3dh_Init()){
+					LED_ERROR(8);
+				}
+				if(!Lis3dh_InitShakeDetection()){
+					LED_ERROR(9);
+				}
+				Lis3dh_AttachInterrupt(&Acc_Wake);
 				//PM_Disable(PM_SENS_EXT);
 
 				appState = JOIN;
@@ -179,7 +188,13 @@ int main(void){
 			} break;
 			case DEEP_SLEEP:{
 				// save lora settings
+#ifdef DEEP_SLEEP_SENS_ON
+				System_DeepSleep(SENS_EXT_ON);
+#else
+				Lis3dh_DisableInterruptPin();
 				System_DeepSleep(NONE_ON);
+#endif
+
 			} break;
 			case WAKE_UP:{
 				LoRa_WakeUp();

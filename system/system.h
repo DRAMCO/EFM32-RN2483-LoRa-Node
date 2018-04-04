@@ -36,5 +36,6 @@
 
 void System_Init(void);
 void System_DeepSleep(uint8_t PM_ON);
+bool System_EM4WakeUp();
 
 #endif /* PERIPHERALS_H_ */

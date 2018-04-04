@@ -22,6 +22,8 @@
 #ifndef PINMAPPING_H_
 #define PINMAPPING_H_
 
+#include <em_gpio.h>
+
 // User LED
 #define LED_PORT			gpioPortA
 #define LED_PIN				2
@@ -39,6 +41,10 @@
 #define RN2483_RX_PIN		4
 #define RN2483_TX_PORT		gpioPortD
 #define RN2483_TX_PIN		5
+
+// LIS2DH external accelerometer
+#define LIS3DH_INT_PORT		gpioPortF
+#define LIS3DH_INT_PIN		2
 
 // Power supply enable
 #define PM_RN2483_PORT		gpioPortA

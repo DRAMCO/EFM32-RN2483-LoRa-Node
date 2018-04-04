@@ -65,6 +65,4 @@ LoRaStatus_t LoRa_WakeUp(void){
 	return SUCCESS;
 }
 
-void LoRa_DeepSleep(void){
-	// power supply stuff
-}
+
