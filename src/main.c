@@ -166,7 +166,6 @@ int main(void){
 				if(!LPP_AddAnalog(&appData, batteryLPP)){
 					LED_ERROR(6);
 				}
-
 				// Send LPP-formatted payload
 				if(LoRa_SendLppBuffer(appData, LORA_UNCONFIMED) != SUCCESS){
 					LED_ERROR(7);
@@ -178,7 +177,7 @@ int main(void){
 			case SLEEP:{
 				// Sleep for a specified period of time;
 				wakeUp = false;
-				LoRa_Sleep(60000, &wakeUp);
+				LoRa_Sleep(5*60000, &wakeUp);
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}
