@@ -50,7 +50,7 @@ void PM_Enable(PM_SubSystem_t pmss){
 			return;
 		}
 	}
-	DelayMs(30); // give sensor time to power up
+	DelayMs(40); // give sensor time to power up
 }
 
 void PM_Disable(PM_SubSystem_t pmss){
