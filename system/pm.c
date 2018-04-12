@@ -22,6 +22,7 @@
 
 #include "pm.h"
 #include "pin_mapping.h"
+#include "delay.h"
 
 void PM_Init(void){
 	GPIO_PinModeSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN, gpioModePushPull, 0);
@@ -47,8 +48,9 @@ void PM_Enable(PM_SubSystem_t pmss){
 		} break;
 		default: {
 			return;
-		} break;
+		}
 	}
+	DelayMs(30); // give sensor time to power up
 }
 
 void PM_Disable(PM_SubSystem_t pmss){

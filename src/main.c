@@ -105,7 +105,6 @@ int main(void){
 				/* Initialize sensors */
 				// 1. Temperature and relative humidity
 				PM_Enable(PM_SENS_GECKO);
-				DelayMs(20);
 				if(!Si7021_Detect()){
 					LED_ERROR(1);
 				}
@@ -137,7 +136,7 @@ int main(void){
 				/* Perform measurements */
 				// Measure temperature and relative humidity
 				PM_Enable(PM_SENS_GECKO); // turn on sensor supply voltage
-				DelayMs(20); // give sensor time to power up
+
 				Si7021_MeasureRHAndTemp(&rhData, &tData);
 				PM_Disable(PM_SENS_GECKO); // turn off sensor supply voltage
 
