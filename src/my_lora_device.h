@@ -23,7 +23,7 @@
 
 /* OVER_THE_AIR_ACTIVATION:
  * 	- set to 1 to use the Over-the-Air activation procedure
- * 	- set to 0 t* use the Personalization activation procedure
+ * 	- set to 0 to use the Personalization activation procedure
  */
 #define OVER_THE_AIR_ACTIVATION		1
 

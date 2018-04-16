@@ -30,13 +30,15 @@
 
 
 
-// Toggle sensor sleeping on and off by commenting out the APP_LET_SENSORS_SLEEP parameter
-// This reduces the power consumption of your IoT device
-#define APP_LET_SENSORS_SLEEP
+/* LET SENSORS GO TO SLEEP:
+ * 	- set to 1 to let sensors sleep
+ * 	- set to 0 to not let sensors go to sleep
+ */
+#define APP_LET_SENSORS_SLEEP 0
 
 // DO NOT TOUCH
-// This functionality is adjust through the APP_LET_SENSORS_SLEEP parameter
-#ifdef APP_LET_SENSORS_SLEEP
+// This functionality is adjust through the above APP_LET_SENSORS_SLEEP parameter
+#if APP_LET_SENSORS_SLEEP == 1
 	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
 	#define SENSORS_TO_SLEEP() 	PM_Disable(PM_SENS_GECKO)
 #else
