@@ -28,7 +28,20 @@
 #include "si7021.h"
 #include "bme280.h"
 
-//#define DEEP_SLEEP_SENS_ON
+
+// Toggle sensor sleeping on and off by commenting out the APP_LET_SENSORS_SLEEP parameter
+// This reduces the power consumption of your IoT device
+#define APP_LET_SENSORS_SLEEP
+
+// DO NOT TOUCH
+// This functionality is adjust through the APP_LET_SENSORS_SLEEP parameter
+#ifdef APP_LET_SENSORS_SLEEP
+	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
+	#define SENSORS_TO_SLEEP() 	PM_Disable(PM_SENS_GECKO)
+#else
+	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
+	#define SENSORS_TO_SLEEP() ((void)0)
+#endif
 
 volatile uint8_t errorNr = 0;
 volatile bool wakeUp;
@@ -104,12 +117,11 @@ int main(void){
 
 				/* Initialize sensors */
 				// 1. Temperature and relative humidity
-				PM_Enable(PM_SENS_GECKO);
+				SENSORS_OUT_SLEEP();
 				if(!Si7021_Detect()){
 					LED_ERROR(1);
 				}
-				PM_Disable(PM_SENS_GECKO);
-
+				SENSORS_TO_SLEEP();
 				// 2. Accelerometer
 				/*PM_Enable(PM_SENS_EXT);
 				DelayMs(20);
@@ -135,11 +147,9 @@ int main(void){
 			case MEASURE:{
 				/* Perform measurements */
 				// Measure temperature and relative humidity
-				PM_Enable(PM_SENS_GECKO); // turn on sensor supply voltage
-
+				SENSORS_OUT_SLEEP();
 				Si7021_MeasureRHAndTemp(&rhData, &tData);
-				PM_Disable(PM_SENS_GECKO); // turn off sensor supply voltage
-
+				SENSORS_TO_SLEEP();
 				// Measure battery level
 				ADC_Measure(BATTERY_LEVEL, &batteryLevel);
 
@@ -181,19 +191,15 @@ int main(void){
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}
+				// wake up because of button pressed
 				else{ // sleep time has passed
 					appState = MEASURE;
 				}
 			} break;
 			case DEEP_SLEEP:{
 				// save lora settings
-#ifdef DEEP_SLEEP_SENS_ON
-				System_DeepSleep(SENS_EXT_ON);
-#else
 				Lis3dh_DisableInterruptPin();
 				System_DeepSleep(NONE_ON);
-#endif
-
 			} break;
 			case WAKE_UP:{
 				LoRa_WakeUp();
