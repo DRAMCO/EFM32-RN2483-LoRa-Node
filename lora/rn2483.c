@@ -225,12 +225,20 @@ RN2483_Status_t RN2483_JoinABP(char * receiveBuffer, uint8_t bufferSize){
 	return RN2483_ProcessMacCommand(receiveBuffer, bufferSize, true);
 }
 
-static RN2483_Status_t RN2483_SetDefaultOperation(char * receiveBuffer, uint8_t bufferSize){
+static RN2483_Status_t RN2483_SetDefaultOperation(LoRaSettings_t settings, char * receiveBuffer, uint8_t bufferSize){
 	RN2483_Status_t status = RN2483_SetOutputPower(RN2483_POWER_14DBM, receiveBuffer, bufferSize);
 	if(status != MAC_OK){
 		return status;
 	}
 	status = RN2483_DisableAutomaticReplies(receiveBuffer, bufferSize);
+	if(status != MAC_OK){
+		return status;
+	}
+	status = RN2483_DisableAdaptiveDataRate(receiveBuffer, bufferSize);
+	if(status != MAC_OK){
+		return status;
+	}
+	status = RN2483_SetDataRate(settings.dataRate, receiveBuffer, bufferSize);
 	if(status != MAC_OK){
 		return status;
 	}
@@ -279,7 +287,7 @@ RN2483_Status_t RN2483_SetupOTAA(LoRaSettings_t settings, char * receiveBuffer, 
 	if(status != MAC_OK){
 		return status;
 	}
-	status = RN2483_SetDefaultOperation(receiveBuffer, bufferSize);
+	status = RN2483_SetDefaultOperation(settings, receiveBuffer, bufferSize);
 	if(status != MAC_OK){
 		return status;
 	}
@@ -303,7 +311,7 @@ RN2483_Status_t RN2483_SetupABP(LoRaSettings_t settings, char * receiveBuffer, u
 	if(status != MAC_OK){
 		return status;
 	}
-	status = RN2483_SetDefaultOperation(receiveBuffer, bufferSize);
+	status = RN2483_SetDefaultOperation(settings, receiveBuffer, bufferSize);
 	if(status != MAC_OK){
 		return status;
 	}

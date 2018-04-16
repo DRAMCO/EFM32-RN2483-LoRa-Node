@@ -29,6 +29,7 @@
 #include "bme280.h"
 
 
+
 // Toggle sensor sleeping on and off by commenting out the APP_LET_SENSORS_SLEEP parameter
 // This reduces the power consumption of your IoT device
 #define APP_LET_SENSORS_SLEEP
@@ -42,6 +43,8 @@
 	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
 	#define SENSORS_TO_SLEEP() ((void)0)
 #endif
+
+#define A_MINUTE 60000
 
 volatile uint8_t errorNr = 0;
 volatile bool wakeUp;
@@ -67,6 +70,7 @@ void PB1_Pressed(void){
 }
 
 void PB0_Pressed(void){
+
 }
 
 void Acc_Wake(void){
@@ -187,7 +191,7 @@ int main(void){
 			case SLEEP:{
 				// Sleep for a specified period of time;
 				wakeUp = false;
-				LoRa_Sleep(5*60000, &wakeUp);
+				LoRa_Sleep(5*A_MINUTE, &wakeUp);
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}
