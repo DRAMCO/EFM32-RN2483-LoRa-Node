@@ -28,6 +28,8 @@
 #include "si7021.h"
 #include "bme280.h"
 
+#define A_MINUTE 60000
+
 //#define DEEP_SLEEP_SENS_ON
 
 volatile uint8_t errorNr = 0;
@@ -54,6 +56,7 @@ void PB1_Pressed(void){
 }
 
 void PB0_Pressed(void){
+
 }
 
 void Acc_Wake(void){
@@ -177,7 +180,7 @@ int main(void){
 			case SLEEP:{
 				// Sleep for a specified period of time;
 				wakeUp = false;
-				LoRa_Sleep(5*60000, &wakeUp);
+				LoRa_Sleep(5*A_MINUTE, &wakeUp);
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}

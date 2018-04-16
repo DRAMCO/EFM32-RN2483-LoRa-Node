@@ -42,8 +42,19 @@ typedef enum activation_methods{
 	ABP
 } LoRaActivationMethod_t;
 
+// EU data rates
+typedef enum data_rates{
+	SF12_BW125 = 0,
+	SF11_BW125 = 1,
+	SF10_BW125 = 2,
+	SF9_BW125 = 3,
+	SF8_BW125 = 4,
+	SF7_BW125 = 5
+} LoRaDataRate_t;
+
 typedef struct{
 	LoRaActivationMethod_t activationMethod;
+	LoRaDataRate_t dataRate;
 	char deviceEUI[LORA_EUI_LENGTH+1];
 	char applicationEUI[LORA_EUI_LENGTH+1];
 	char applicationKey[LORA_KEY_LENGTH+1];
