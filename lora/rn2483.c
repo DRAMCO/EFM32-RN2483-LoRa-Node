@@ -11,19 +11,19 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "em_device.h"
-#include "em_chip.h"
-#include "em_cmu.h"
-#include "em_gpio.h"
-#include "em_usart.h"
+#include <em_device.h>
+#include <em_chip.h>
+#include <em_cmu.h>
+#include <em_gpio.h>
+#include <em_usart.h>
 #include <em_leuart.h>
 
 #include "leuart.h"
 #include "delay.h"
 #include "util.h"
 #include "lora.h"
-
 #include "rn2483.h"
+#include "pin_mapping.h"
 
 char commandBuffer[RN2483_COMMANDBUFFER_SIZE];
 
@@ -107,11 +107,13 @@ static RN2483_Status_t RN2483_ProcessSleepCommand(char * receiveBuffer, uint8_t 
 }
 
 void RN2483_Init(void){ // Setup with autobaud
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
+	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 1);
+	DelayMs(100);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 1);
 	DelayMs(50);
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 0);
 	DelayMs(50);
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 1);
 	DelayMs(350);
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);

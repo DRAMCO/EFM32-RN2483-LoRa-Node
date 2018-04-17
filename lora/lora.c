@@ -22,8 +22,6 @@
 #include "rn2483.h"
 #include "lpp.h"
 #include "lora.h"
-#include "pin_mapping.h"
-#include "em_gpio.h"
 
 #define LORA_BUFFERSIZE		64
 #define MAX_JOIN_RETRIES	5
@@ -32,8 +30,7 @@ char loraReceiveBuffer[LORA_BUFFERSIZE];
 
 LoRaStatus_t LoRa_Init(LoRaSettings_t init){
 	PM_Enable(PM_RN2483);
-	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 1);
-	DelayMs(100);
+
 	RN2483_Init();
 
 	int retries = 0;

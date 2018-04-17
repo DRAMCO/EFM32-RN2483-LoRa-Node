@@ -38,9 +38,11 @@
 #define RN2483_RESET_PORT	gpioPortA
 #define RN2483_RESET_PIN	10
 #define RN2483_RX_PORT		gpioPortD
-#define RN2483_RX_PIN		4
+#define RN2483_RX_PIN		5
 #define RN2483_TX_PORT		gpioPortD
-#define RN2483_TX_PIN		5
+#define RN2483_TX_PIN		4
+#define RN2483_UART			LEUART0
+#define RN2483_UART_LOC		0
 
 // LIS2DH external accelerometer
 #define LIS3DH_INT_PORT		gpioPortF

@@ -129,17 +129,6 @@ int main(void){
 				}
 				SENSORS_TO_SLEEP();
 
-				// 2. Accelerometer
-				/*PM_Enable(PM_SENS_EXT);
-				if(!Lis3dh_Init()){
-					LED_ERROR(8);
-				}
-				if(!Lis3dh_InitShakeDetection()){
-					LED_ERROR(9);
-				}
-				Lis3dh_AttachInterrupt(&Acc_Wake);*/
-				//PM_Disable(PM_SENS_EXT);
-
 				appState = JOIN;
 			} break;
 			case JOIN:{

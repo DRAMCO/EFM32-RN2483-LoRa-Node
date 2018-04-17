@@ -21,16 +21,10 @@
 #include "delay.h"
 #include "util.h"
 #include "leuart.h"
+#include "pin_mapping.h"
 
 #define TX_TIMEOUT_DURATION		2000	// ms
 #define RX_TIMEOUT_DURATION		10000	// ms
-
-/** LEUART Rx/Tx Port/Pin Location */
-#define LEUART_LOCATION    0
-#define LEUART_TXPORT      gpioPortD        /* LEUART transmission port */
-#define LEUART_TXPIN       4                /* LEUART transmission pin  */
-#define LEUART_RXPORT      gpioPortD        /* LEUART reception port    */
-#define LEUART_RXPIN       5                /* LEUART reception pin     */
 
 /** DMA Configurations            */
 #define DMA_CHANNEL_TX       0          /* DMA channel is 0 */
@@ -65,7 +59,7 @@ static void basicTxComplete(unsigned int channel, bool primary, void *user){
 					primary,
 					false,
 					(void *)&receiveBuffer[0],
-					(void *)&LEUART0->RXDATA,
+					(void *)&RN2483_UART->RXDATA,
 					0);
 	bufferPointer = 0;
 }
@@ -74,7 +68,7 @@ static void basicRxComplete(unsigned int channel, bool primary, void *user){
 	(void) user;
 
 	/* Refresh DMA basic transaction cycle */
-	char c = LEUART0->RXDATA;
+	char c = RN2483_UART->RXDATA;
 	if(bufferPointer < RECEIVE_BUFFER_SIZE - 1){
 		if(c != '\n'){
 			bufferPointer++;
@@ -167,12 +161,12 @@ void setupDma(void){
 
 static void sendLeuartData(char * buffer, uint8_t bufferLength){
 	// Wait for sync
-	while (LEUART0->SYNCBUSY);
+	while (RN2483_UART->SYNCBUSY);
 
 	DMA_ActivateBasic(DMA_CHANNEL_TX,
 	                  true,
 	                  false,
-	                  (void *)&LEUART0->TXDATA,
+	                  (void *)&RN2483_UART->TXDATA,
 	                  buffer,
 	                  (unsigned int)(bufferLength - 1));
 
@@ -188,8 +182,8 @@ static void setupLeuart(void){
 	/* Configure GPIO pins */
 	CMU_ClockEnable(cmuClock_GPIO, true);
 	/* To avoid false start, configure output as high */
-	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
-	GPIO_PinModeSet(LEUART_RXPORT, LEUART_RXPIN, gpioModeInput, 0);
+	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 1);
+	GPIO_PinModeSet(RN2483_RX_PORT, RN2483_RX_PIN, gpioModeInput, 0);
 
 	LEUART_Init_TypeDef init = LEUART_INIT_DEFAULT; // Default config is fine
 	init.baudrate = 4800;
@@ -207,20 +201,20 @@ static void setupLeuart(void){
 	/* Configure LEUART */
 	init.enable = leuartDisable;
 
-	LEUART_Init(LEUART0, &init);
+	LEUART_Init(RN2483_UART, &init);
 
 	/* Enable pins at default location */
-	LEUART0->ROUTE = LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN | LEUART_LOCATION;
+	RN2483_UART->ROUTE = LEUART_ROUTE_RXPEN | LEUART_ROUTE_TXPEN | RN2483_UART_LOC;
 
 	/* Set RXDMAWU to wake up the DMA controller in EM2 */
-	LEUART_RxDmaInEM2Enable(LEUART0, true);
+	LEUART_RxDmaInEM2Enable(RN2483_UART, true);
 
 	/* Clear previous RX interrupts */
-	LEUART_IntClear(LEUART0, LEUART_IF_RXDATAV);
+	LEUART_IntClear(RN2483_UART, LEUART_IF_RXDATAV);
 	NVIC_ClearPendingIRQ(LEUART0_IRQn);
 
 	/* Finally enable it */
-	LEUART_Enable(LEUART0, leuartEnable);
+	LEUART_Enable(RN2483_UART, leuartEnable);
 }
 
 void Leuart_Init(void){
@@ -235,7 +229,7 @@ void Leuart_Init(void){
 }
 
 void Leuart_Reinit(void){
-	LEUART_Reset(LEUART0);
+	LEUART_Reset(RN2483_UART);
 	Leuart_BreakCondition();
 	setupLeuart();
 
@@ -248,11 +242,11 @@ void Leuart_Reinit(void){
 }
 
 void Leuart_BreakCondition(void){
-	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
+	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 1);
 	DelayMs(40);
-	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 0);
+	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 0);
 	DelayMs(20);
-	GPIO_PinOutSet(LEUART_TXPORT, LEUART_TXPIN);
+	GPIO_PinOutSet(RN2483_TX_PORT, RN2483_TX_PIN);
 }
 
 void Leuart_ReadResponse(char * buffer, uint8_t bufferLength){
@@ -307,7 +301,7 @@ Leuart_Status_t Leuart_WaitForResponse(){
 						true,
 						false,
 						(void *)&receiveBuffer[0],
-						(void *)&LEUART0->RXDATA,
+						(void *)&RN2483_UART->RXDATA,
 						0);
 
 	// Start Timeout-timer
