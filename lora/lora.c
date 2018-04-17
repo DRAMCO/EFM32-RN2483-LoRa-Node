@@ -23,9 +23,8 @@
 #include "lpp.h"
 #include "lora.h"
 
-
-
-#define LORA_BUFFERSIZE	64
+#define LORA_BUFFERSIZE		64
+#define MAX_JOIN_RETRIES	5
 
 char loraReceiveBuffer[LORA_BUFFERSIZE];
 
@@ -33,7 +32,15 @@ LoRaStatus_t LoRa_Init(LoRaSettings_t init){
 	PM_Enable(PM_RN2483);
 	RN2483_Init();
 
-	if(RN2483_Setup(init, loraReceiveBuffer, LORA_BUFFERSIZE) != JOIN_ACCEPTED){
+	int retries = 0;
+	while(retries < MAX_JOIN_RETRIES){
+		if(RN2483_Setup(init, loraReceiveBuffer, LORA_BUFFERSIZE) == JOIN_ACCEPTED){
+			break;
+		}
+		retries++;
+		DelayMs(5000);
+	}
+	if(retries == MAX_JOIN_RETRIES){
 		return ERROR;
 	}
 	return JOINED;

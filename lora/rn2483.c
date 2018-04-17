@@ -108,9 +108,9 @@ static RN2483_Status_t RN2483_ProcessSleepCommand(char * receiveBuffer, uint8_t 
 
 void RN2483_Init(void){ // Setup with autobaud
 	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
-	DelayMs(20);
+	DelayMs(50);
 	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
-	DelayMs(250);
+	DelayMs(350);
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
 

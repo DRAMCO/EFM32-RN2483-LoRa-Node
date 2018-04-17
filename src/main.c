@@ -117,7 +117,7 @@ int main(void){
 				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
 				Buttons_AttachInterrupt(&PB1_Pressed, BUTTON_PB1);
 					// Read the battery level
-				ADC_Measure(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
+				ADC_Measure(BATTERY_LEVEL, &batteryLevel);
 					// Wait (in EM2)
 				DelayMs(500);
 
@@ -128,9 +128,9 @@ int main(void){
 					LED_ERROR(1);
 				}
 				SENSORS_TO_SLEEP();
+
 				// 2. Accelerometer
 				/*PM_Enable(PM_SENS_EXT);
-				DelayMs(20);
 				if(!Lis3dh_Init()){
 					LED_ERROR(8);
 				}
@@ -205,6 +205,7 @@ int main(void){
 			case DEEP_SLEEP:{
 				// save lora settings
 				Lis3dh_DisableInterruptPin();
+				//System_DeepSleep(SENS_EXT_ON);
 				System_DeepSleep(NONE_ON);
 			} break;
 			case WAKE_UP:{
