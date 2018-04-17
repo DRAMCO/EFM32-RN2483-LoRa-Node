@@ -231,7 +231,7 @@ void Leuart_Init(void){
 	// Auto baud setting
 	char b[] = "U";
 	sendLeuartData(b, 1);
-	DelayMs(20);
+	DelayMs(500);
 }
 
 void Leuart_Reinit(void){
@@ -249,7 +249,7 @@ void Leuart_Reinit(void){
 
 void Leuart_BreakCondition(void){
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 1);
-	DelayMs(20);
+	DelayMs(40);
 	GPIO_PinModeSet(LEUART_TXPORT, LEUART_TXPIN, gpioModePushPull, 0);
 	DelayMs(20);
 	GPIO_PinOutSet(LEUART_TXPORT, LEUART_TXPIN);
