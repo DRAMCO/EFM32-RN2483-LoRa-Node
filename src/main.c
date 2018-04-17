@@ -37,7 +37,7 @@
 #define APP_LET_SENSORS_SLEEP 0
 
 // DO NOT TOUCH
-// This functionality is adjust through the above APP_LET_SENSORS_SLEEP parameter
+// This functionality is adjusted through the above APP_LET_SENSORS_SLEEP parameter
 #if APP_LET_SENSORS_SLEEP == 1
 	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
 	#define SENSORS_TO_SLEEP() 	PM_Disable(PM_SENS_GECKO)
