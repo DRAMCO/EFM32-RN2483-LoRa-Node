@@ -13,9 +13,8 @@
  *         File: buttons.c
  *      Created: 2018-03-20
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: EFM32 Happy Gecko button functions.
  */
 
 #include <stdbool.h>
@@ -25,10 +24,13 @@
 #include "pin_mapping.h"
 #include "buttons.h"
 
+/* Initialize buttons as input and enable interrupts.
+ */
 void Buttons_Init(void){
 	GPIO_PinModeSet(PB0_PORT, PB0_PIN, gpioModeInput, 0);
 	GPIO_PinModeSet(PB1_PORT, PB1_PIN, gpioModeInput, 0);
 
+	//TODO: move this to irq.c
 	GPIO_ExtIntConfig(PB0_PORT, PB0_PIN, PB0_PIN, false, true, true);
 	GPIO_ExtIntConfig(PB1_PORT, PB1_PIN, PB1_PIN, false, true, true);
 	GPIO_IntClear(0xFFFF);  // Clear pending interrupts
@@ -37,6 +39,8 @@ void Buttons_Init(void){
 
 }
 
+/* Set callback function for a button press event.
+ */
 void Buttons_AttachInterrupt(void * cb, button_t b){
 	switch(b){
 		case BUTTON_PB0:{

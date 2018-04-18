@@ -1,29 +1,41 @@
-/*
- * rn2483.c
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 18-jan.-2018
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: rn2483.c
+ *      Created: 2018-01-18
+ *       Author: Guus Leenders
+ *
+ *  Description: Interfacing with the RN2483 LoRa modem.
+ *  	Wraps commands in a more readable format. Handles serial
+ *  	command-response mechanism.
  */
-
-
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "em_device.h"
-#include "em_chip.h"
-#include "em_cmu.h"
-#include "em_gpio.h"
-#include "em_usart.h"
+#include <em_device.h>
+#include <em_chip.h>
+#include <em_cmu.h>
+#include <em_gpio.h>
+#include <em_usart.h>
 #include <em_leuart.h>
 
 #include "leuart.h"
 #include "delay.h"
 #include "util.h"
 #include "lora.h"
-
 #include "rn2483.h"
+#include "pin_mapping.h"
 
 char commandBuffer[RN2483_COMMANDBUFFER_SIZE];
 
@@ -107,10 +119,14 @@ static RN2483_Status_t RN2483_ProcessSleepCommand(char * receiveBuffer, uint8_t 
 }
 
 void RN2483_Init(void){ // Setup with autobaud
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 0);
-	DelayMs(20);
-	GPIO_PinModeSet(gpioPortA, 10, gpioModePushPull, 1);
-	DelayMs(250);
+	GPIO_PinModeSet(RN2483_TX_PORT, RN2483_TX_PIN, gpioModePushPull, 1);
+	DelayMs(100);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 1);
+	DelayMs(50);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 0);
+	DelayMs(50);
+	GPIO_PinModeSet(RN2483_RESET_PORT, RN2483_RESET_PIN, gpioModePushPull, 1);
+	DelayMs(350);
 
 	memset(commandBuffer, '\0', RN2483_COMMANDBUFFER_SIZE);
 

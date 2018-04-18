@@ -13,14 +13,13 @@
  *         File: lpp.h
  *      Created: 2018-03-23
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for lpp.c
  */
 
 
-#ifndef LORA_LPP_H_
-#define LORA_LPP_H_
+#ifndef _LPP_H_
+#define _LPP_H_
 
 #include <em_device.h>
 #include <stdbool.h>
@@ -41,4 +40,4 @@ bool LPP_AddHumidity(LPP_Buffer_t *b, uint8_t data);
 bool LPP_AddAccelerometer(LPP_Buffer_t *b, int16_t x, int16_t y, int16_t z);
 bool LPP_AddPressure(LPP_Buffer_t *b, uint16_t data);
 
-#endif /* LORA_LPP_H_ */
+#endif /* _LPP_H_ */

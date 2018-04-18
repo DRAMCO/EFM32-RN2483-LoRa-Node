@@ -1,19 +1,21 @@
-/**************************************************************************//**
- * @file
- * @brief Empty Project
- * @author Energy Micro AS
- * @version 3.20.2
- ******************************************************************************
- * @section License
- * <b>(C) Copyright 2014 Silicon Labs, http://www.silabs.com</b>
- *******************************************************************************
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- * This file is licensed under the Silicon Labs Software License Agreement. See 
- * "http://developer.silabs.com/legal/version/v11/Silicon_Labs_Software_License_Agreement.txt"  
- * for details. Before using this software for any purpose, you must agree to the 
- * terms of that agreement.
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
  *
- ******************************************************************************/
+ *         File: main.c
+ *      Created: 2018-01-18
+ *
+ *  Description: Main application.
+ */
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -37,7 +39,7 @@
 #define APP_LET_SENSORS_SLEEP 0
 
 // DO NOT TOUCH
-// This functionality is adjust through the above APP_LET_SENSORS_SLEEP parameter
+// This functionality is adjusted through the above APP_LET_SENSORS_SLEEP parameter
 #if APP_LET_SENSORS_SLEEP == 1
 	#define SENSORS_OUT_SLEEP() PM_Enable(PM_SENS_GECKO)
 	#define SENSORS_TO_SLEEP() 	PM_Disable(PM_SENS_GECKO)
@@ -63,7 +65,8 @@ typedef enum app_states{
 
 static volatile APP_State_t appState;
 
-// Interrupt callback functions
+/* Interrupt callback functions */
+// Button 1 callback
 void PB1_Pressed(void){
 	if(appState == SLEEP){
 		LED_On();
@@ -71,11 +74,8 @@ void PB1_Pressed(void){
 	}
 }
 
+// Button 0 callback
 void PB0_Pressed(void){
-
-}
-
-void Acc_Wake(void){
 }
 
 void LED_ERROR(uint8_t err){
@@ -117,7 +117,7 @@ int main(void){
 				Buttons_AttachInterrupt(&PB0_Pressed, BUTTON_PB0);
 				Buttons_AttachInterrupt(&PB1_Pressed, BUTTON_PB1);
 					// Read the battery level
-				ADC_Measure(BATTERY_LEVEL, &batteryLevel); // TODO: check connections & switch setting for battery level measurement
+				ADC_Measure(BATTERY_LEVEL, &batteryLevel);
 					// Wait (in EM2)
 				DelayMs(500);
 
@@ -128,17 +128,6 @@ int main(void){
 					LED_ERROR(1);
 				}
 				SENSORS_TO_SLEEP();
-				// 2. Accelerometer
-				/*PM_Enable(PM_SENS_EXT);
-				DelayMs(20);
-				if(!Lis3dh_Init()){
-					LED_ERROR(8);
-				}
-				if(!Lis3dh_InitShakeDetection()){
-					LED_ERROR(9);
-				}
-				Lis3dh_AttachInterrupt(&Acc_Wake);*/
-				//PM_Disable(PM_SENS_EXT);
 
 				appState = JOIN;
 			} break;
@@ -205,6 +194,7 @@ int main(void){
 			case DEEP_SLEEP:{
 				// save lora settings
 				Lis3dh_DisableInterruptPin();
+				//System_DeepSleep(SENS_EXT_ON);
 				System_DeepSleep(NONE_ON);
 			} break;
 			case WAKE_UP:{

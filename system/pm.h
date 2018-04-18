@@ -13,13 +13,12 @@
  *         File: pm.h
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for pm.c
  */
 
-#ifndef SYSTEM_PM_H_
-#define SYSTEM_PM_H_
+#ifndef _PM_H_
+#define _PM_H_
 
 typedef enum PM_subsystems{
 	PM_SENS_GECKO,
@@ -34,4 +33,4 @@ void PM_Enable(PM_SubSystem_t pmss);
 
 void PM_Disable(PM_SubSystem_t pmss);
 
-#endif /* SYSTEM_PM_H_ */
+#endif /* _PM_H_ */

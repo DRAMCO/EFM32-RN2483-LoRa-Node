@@ -13,9 +13,9 @@
  *         File: pm.c
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Power management functions. Allows you to enable/disable
+ *  	certain subsystems of the LoRa extension board.
  */
 
 #include <em_gpio.h>
@@ -34,9 +34,11 @@ void PM_Enable(PM_SubSystem_t pmss){
 	switch(pmss){
 		case PM_SENS_GECKO: {
 			GPIO_PinOutSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
+			DelayMs(40); // give sensor time to power up
 		} break;
 		case PM_SENS_EXT: {
 			GPIO_PinOutSet(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
+			DelayMs(40); // give sensor time to power up
 		} break;
 		case PM_RN2483: {
 			GPIO_PinOutSet(PM_RN2483_PORT, PM_RN2483_PIN);
@@ -44,13 +46,13 @@ void PM_Enable(PM_SubSystem_t pmss){
 		case PM_ALL: {
 			GPIO_PinOutSet(PM_SENS_GECKO_PORT, PM_SENS_GECKO_PIN);
 			GPIO_PinOutSet(PM_SENS_EXT_PORT, PM_SENS_EXT_PIN);
+			DelayMs(40); // give sensor time to power up
 			GPIO_PinOutSet(PM_RN2483_PORT, PM_RN2483_PIN);
 		} break;
 		default: {
 			return;
 		}
 	}
-	DelayMs(40); // give sensor time to power up
 }
 
 void PM_Disable(PM_SubSystem_t pmss){

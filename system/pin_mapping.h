@@ -14,13 +14,12 @@
  *         File: pinmapping.h
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Descriptive names for specific EFM32 hardware.
  */
 
-#ifndef PINMAPPING_H_
-#define PINMAPPING_H_
+#ifndef _PINMAPPING_H_
+#define _PINMAPPING_H_
 
 #include <em_gpio.h>
 
@@ -38,13 +37,19 @@
 #define RN2483_RESET_PORT	gpioPortA
 #define RN2483_RESET_PIN	10
 #define RN2483_RX_PORT		gpioPortD
-#define RN2483_RX_PIN		4
+#define RN2483_RX_PIN		5
 #define RN2483_TX_PORT		gpioPortD
-#define RN2483_TX_PIN		5
+#define RN2483_TX_PIN		4
+#define RN2483_UART			LEUART0
+#define RN2483_UART_LOC		0
 
-// LIS2DH external accelerometer
-#define LIS3DH_INT_PORT		gpioPortF
-#define LIS3DH_INT_PIN		2
+// External sensor board
+#define EXT_INT_PORT		gpioPortF
+#define EXT_INT_PIN			2
+#define IIC_SCL_PORT		gpioPortD
+#define IIC_SCL_PIN			7
+#define IIC_SDA_PORT		gpioPortD
+#define IIC_SDA_PIN			6
 
 // Power supply enable
 #define PM_RN2483_PORT		gpioPortA
@@ -54,4 +59,4 @@
 #define PM_SENS_EXT_PORT	gpioPortA
 #define PM_SENS_EXT_PIN		9
 
-#endif /* SYSTEM_PINMAPPING_H_ */
+#endif /* _PINMAPPING_H_ */

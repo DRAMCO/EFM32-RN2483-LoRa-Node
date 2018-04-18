@@ -13,13 +13,12 @@
  *         File: system.h
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for system.c
  */
 
-#ifndef PERIPHERALS_H_
-#define PERIPHERALS_H_
+#ifndef _SYSTEM_H_
+#define _SYSTEM_H_
 
 #include "delay.h"
 #include "irq.h"
@@ -29,13 +28,15 @@
 #include "adc.h"
 #include "iic.h"
 
-#define NONE_ON			0x00
-#define RN2483_ON		0x01
-#define SENS_GECKO_ON	0x02
-#define SENS_EXT_ON		0x04
+typedef enum deepsleep_states{
+	NONE_ON	= 0x00,
+	RN2483_ON = 0x01,
+	SENS_GECKO_ON = 0x02,
+	SENS_EXT_ON = 0x04
+} DeepSleep_State_t;
 
 void System_Init(void);
-void System_DeepSleep(uint8_t PM_ON);
+void System_DeepSleep(DeepSleep_State_t PM_ON);
 bool System_EM4WakeUp();
 
-#endif /* PERIPHERALS_H_ */
+#endif /* _SYSTEM_H_ */

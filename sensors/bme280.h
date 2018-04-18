@@ -1,19 +1,26 @@
-/*
- * bme280.h
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 14-dec.-2017
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: bme280.h
+ *      Created: 2018-02-26
+ *       Author: Guus Leenders
+ *
+ *  Description: Header file for bme280.c
  */
-
-#ifndef BME280_H_
-#define BME280_H_
+#ifndef _BME280_H_
+#define _BME280_H_
 
 #include "em_device.h"
 #include <stdbool.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 #define BME280_ADDRESS     0x76<<1
 
@@ -70,5 +77,4 @@ bool Bme280_ReadPressure(int32_t *pres);
 bool Bme280_ReadHumidity(int32_t *hum);
 
 
-
-#endif /* BME280_H_ */
+#endif /* _BME280_H_ */

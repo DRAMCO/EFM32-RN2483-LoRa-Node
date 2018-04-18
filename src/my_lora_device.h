@@ -13,14 +13,17 @@
  *         File: my_lora_device.h
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Change to your desired settings.
  */
 
-#ifndef MY_LORA_DEVICE_H_
-#define MY_LORA_DEVICE_H_
+#ifndef _MY_LORA_DEVICE_H_
+#define _MY_LORA_DEVICE_H_
 
+
+/*****************************************************************************************
+ * CONFIGURE THIS!
+ *****************************************************************************************/
 /* OVER_THE_AIR_ACTIVATION:
  * 	- set to 1 to use the Over-the-Air activation procedure
  * 	- set to 0 to use the Personalization activation procedure
@@ -48,27 +51,35 @@
 #if OVER_THE_AIR_ACTIVATION == 1
 // Copy your settings here
 /* 64-bit device ID */
-#define LORAWAN_DEVICE_EUI			"0056FFEA1D531DC7"
+#define LORAWAN_DEVICE_EUI			"YOUR_DEVICE_EUI_"
 /* 64-bit application ID */
-#define LORAWAN_APPLICATION_EUI     "70B3D57ED000B816"
+#define LORAWAN_APPLICATION_EUI     "YOUR_APP_EUI____"
 /* 128-bit AES key */
-#define LORAWAN_APPLICATION_KEY     "990A948D12DADF5D90C90EFF0BDBDE66"
+#define LORAWAN_APPLICATION_KEY     "YOUR_SECRET_AES_APPLICATION_KEY_"
+>>>>>>> 759a5ec7bbcb55f09f0f02899c41a6067f944111
 // Don't change
 #define JOIN_MECHANISM				OTAA
 
 #elif OVER_THE_AIR_ACTIVATION == 0
 // Copy your settings here
 /* 32-bit device address */
-#define LORAWAN_DEVICE_ADDRESS     	"01234567"
+#define LORAWAN_DEVICE_ADDRESS     	"DEV_ADDR"
 /* 128-bit AES key */
-#define LORAWAN_NWKSKEY             "0123456789ABCDEFFEDCBA9876543210"
+#define LORAWAN_NWKSKEY             "YOUR_SECRET_AES_NWK_SESSION_KEY_"
 /* 128-bit AES key */
-#define LORAWAN_APPSKEY             "FEDCBA98765432100123456789ABCDEF"
+#define LORAWAN_APPSKEY             "YOUR_SECRET_AES_APP_SESSION_KEY_"
 // Don't change
 #define JOIN_MECHANISM				ABP
 #else
 #error "OVER_THE_AIR_ACTIVATION has the wrong value"
 #endif
+/*****************************************************************************************
+ * END OF CONFIGURABLE SECTION
+ *****************************************************************************************/
+
+
+
+
 
 /*****************************************************************************************
  * DO NOT CHANGE !
@@ -97,4 +108,4 @@
 }
 #endif
 
-#endif /* MY_LORA_DEVICE_H_ */
+#endif /* _MY_LORA_DEVICE_H_ */

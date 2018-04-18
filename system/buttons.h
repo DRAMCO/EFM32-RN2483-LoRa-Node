@@ -13,21 +13,24 @@
  *         File: buttons.h
  *      Created: 2018-03-20
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for buttons.c
  */
 
-#ifndef INC_BUTTONS_H_
-#define INC_BUTTONS_H_
+#ifndef _BUTTONS_H_
+#define _BUTTONS_H_
 
 typedef enum buttons{
 	BUTTON_PB0,
 	BUTTON_PB1
 } button_t;
 
+/* Initialize buttons as input and enable interrupts.
+ */
 void Buttons_Init(void);
 
+/* Set callback function for a button press event.
+ */
 void Buttons_AttachInterrupt(void * cb, button_t b);
 
-#endif /* INC_BUTTONS_H_ */
+#endif /* _BUTTONS_H_ */
