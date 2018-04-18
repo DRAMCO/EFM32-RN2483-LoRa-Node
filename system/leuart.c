@@ -1,9 +1,23 @@
-/*
- * rn2483.c
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 19-dec.-2017
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: leuart.c
+ *      Created: 2018-01-26
+ *       Author: Guus Leenders
+ *
+ *  Description: This file contains the LEUART (serial communication)
+ *  	functionality required by the RN2483 LoRa modem.
  */
+
 #include <stdint.h>
 #include <stdbool.h>
 

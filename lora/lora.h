@@ -13,13 +13,12 @@
  *         File: lora.h
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for lora.c
  */
 
-#ifndef LORA_LORA_H_
-#define LORA_LORA_H_
+#ifndef _LORA_H_
+#define _LORA_H_
 
 #define LORA_UNCONFIMED				false
 #define LORA_CONFIRMED				true
@@ -70,4 +69,4 @@ LoRaStatus_t LoRa_SendLppBuffer(LPP_Buffer_t b, bool ackNoAck);
 void LoRa_Sleep(uint32_t durationMs, volatile bool * wakeUp);
 LoRaStatus_t LoRa_WakeUp(void);
 
-#endif /* LORA_LORA_H_ */
+#endif /* _LORA_H_ */

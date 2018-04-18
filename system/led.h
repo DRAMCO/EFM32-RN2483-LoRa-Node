@@ -13,14 +13,13 @@
  *         File: user_led.h
  *      Created: 2018-03-16
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for led.c
  */
 
 
-#ifndef INC_LED_H_
-#define INC_LED_H_
+#ifndef _LED_H_
+#define _LED_H_
 
 typedef enum led_states{
 	LED_ON = 1,
@@ -32,4 +31,4 @@ void LED_On(void);
 void LED_Off(void);
 void LED_Toggle(void);
 
-#endif /* INC_LED_H_ */
+#endif /* _LED_H_ */

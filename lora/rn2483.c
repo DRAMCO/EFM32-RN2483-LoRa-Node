@@ -1,11 +1,23 @@
-/*
- * rn2483.c
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 18-jan.-2018
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: rn2483.c
+ *      Created: 2018-01-18
+ *       Author: Guus Leenders
+ *
+ *  Description: Interfacing with the RN2483 LoRa modem.
+ *  	Wraps commands in a more readable format. Handles serial
+ *  	command-response mechanism.
  */
-
-
 
 #include <stdint.h>
 #include <stdbool.h>

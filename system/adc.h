@@ -13,13 +13,12 @@
  *         File: adc.h
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for adc.c
  */
 
-#ifndef SYSTEM_ADC_H_
-#define SYSTEM_ADC_H_
+#ifndef _ADC_H_
+#define _ADC_H_
 
 #include <em_device.h>
 
@@ -39,9 +38,6 @@ typedef enum adc_statuses{
 // Quick way to initialize all necessary channels/conversions
 void ADC_InitChannels(void);
 
-//ADC_Status_t ADC_Init_Measurement(ADC_Measurement_t measurement);
-
-//ADC_Status_t ADC_Get_Measurement(ADC_Measurement_t measurement, uint32_t * value);
 ADC_Status_t ADC_Measure(ADC_Measurement_t measurement, uint32_t * value);
 
-#endif /* SYSTEM_ADC_H_ */
+#endif /* _ADC_H_ */

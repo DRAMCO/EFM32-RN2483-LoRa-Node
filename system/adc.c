@@ -13,11 +13,9 @@
  *         File: adc.c
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO expand
- *  	Contains wrapper for EM-lib ADC functionality.
- *  	Currently only a single-channel single conversion
+ *  Description: EFM32 ADC functionality for measuring (internal) temperature
+ *  	and battery level.
  */
 
 #include <em_device.h>
@@ -33,6 +31,7 @@ ADC_Init_TypeDef       init       = ADC_INIT_DEFAULT;
 ADC_InitSingle_TypeDef initSingle = ADC_INITSINGLE_DEFAULT;
 
 static float32_t ConvertToCelsius(int32_t adcSample);
+
 
 void ADC_InitChannels(void){
 	/* Enable ADC clock */

@@ -13,7 +13,6 @@
  *         File: bme280.c
  *      Created: 2018-02-26
  *       Author: Guus Leenders
- *      Version: 1.0
  *
  *  Description: TODO
  */

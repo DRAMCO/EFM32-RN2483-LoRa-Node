@@ -13,9 +13,8 @@
  *         File: irq.h
  *      Created: 2018-03-20
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for irq.c
  */
 
 #ifndef INC_IRQ_H_

@@ -13,9 +13,8 @@
  *         File: user_led.c
  *      Created: 2018-03-16
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Basic functions to control the user LED.
  */
 
 #include <em_gpio.h>

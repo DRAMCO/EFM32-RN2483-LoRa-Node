@@ -13,9 +13,8 @@
  *         File: lpp.c
  *      Created: 2018-03-23
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Basic Low Power Payload (LPP) functionality.
  */
 
 #include <stdlib.h>

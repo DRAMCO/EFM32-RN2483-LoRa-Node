@@ -13,9 +13,9 @@
  *         File: iic.c
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: I2C functionality (wrapper for EFM 32).
+ *  	Used for interfacing with sensors.
  */
 
 #include <i2cspm.h>

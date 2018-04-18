@@ -13,9 +13,8 @@
  *         File: lis3dh.c
  *      Created: 2018-02-26
  *       Author: Guus Leenders
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: LIS3DH 3-Axis accelerometer functionality.
  */
 
 #include <stddef.h>
@@ -189,9 +188,9 @@ bool Lis3dh_InitShakeDetection(void){
 		return false;
 	}
 
-	GPIO_PinModeSet(LIS3DH_INT_PORT, LIS3DH_INT_PIN, gpioModeInput, 0);
-	GPIO_ExtIntConfig(LIS3DH_INT_PORT, LIS3DH_INT_PIN, LIS3DH_INT_PIN, false, true, true);
-	GPIO_IntClear(1	<< LIS3DH_INT_PIN);	// Clear pending interrupts
+	GPIO_PinModeSet(EXT_INT_PORT, EXT_INT_PIN, gpioModeInput, 0);
+	GPIO_ExtIntConfig(EXT_INT_PORT, EXT_INT_PIN, EXT_INT_PIN, false, true, true);
+	GPIO_IntClear(1	<< EXT_INT_PIN);	// Clear pending interrupts
 
 	return true;
 }
@@ -212,11 +211,11 @@ bool Lis3dh_ReadValues(uint16_t * x, uint16_t * y, uint16_t * z){
 }
 
 void Lis3dh_DisableInterruptPin(void){
-	GPIO_ExtIntConfig(LIS3DH_INT_PORT, LIS3DH_INT_PIN, LIS3DH_INT_PIN, false, true, false);
-	GPIO_IntClear(1	<< LIS3DH_INT_PIN);	// Clear pending interrupts
-	GPIO_PinModeSet(LIS3DH_INT_PORT, LIS3DH_INT_PIN, gpioModePushPull, 0);
+	GPIO_ExtIntConfig(EXT_INT_PORT, EXT_INT_PIN, EXT_INT_PIN, false, true, false);
+	GPIO_IntClear(1	<< EXT_INT_PIN);	// Clear pending interrupts
+	GPIO_PinModeSet(EXT_INT_PORT, EXT_INT_PIN, gpioModePushPull, 0);
 }
 
 void Lis3dh_AttachInterrupt(void * cb){
-	IRQ_AttachInterrupt(cb, LIS3DH_INT_PIN);
+	IRQ_AttachInterrupt(cb, EXT_INT_PIN);
 }

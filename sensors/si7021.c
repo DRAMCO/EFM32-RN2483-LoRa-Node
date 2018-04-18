@@ -13,9 +13,8 @@
  *         File: si7021.c
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: SI7021 temperature and humidity sensor functionality.
  */
 
 #include <stddef.h>

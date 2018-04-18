@@ -1,12 +1,24 @@
-/*
- * rn2483.h
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 18-jan.-2018
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: rn2483.h
+ *      Created: 2018-01-18
+ *       Author: Guus Leenders
+ *
+ *  Description: Header file for rn2483.c
  */
 
-#ifndef INC_RN2483_H_
-#define INC_RN2483_H_
+#ifndef _RN2483_H_
+#define _RN2483_H_
 
 #include "em_device.h"
 #include "em_chip.h"
@@ -76,4 +88,4 @@ RN2483_Status_t RN2483_ResumeMac(char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_Sleep(uint32_t sleepTime, volatile bool * wakeUp, char * receiveBuffer, uint8_t bufferSize);
 RN2483_Status_t RN2483_Wake(char * receiveBuffer, uint8_t bufferSize);
 
-#endif /* INC_RN2483_H_ */
+#endif /* _RN2483_H_ */

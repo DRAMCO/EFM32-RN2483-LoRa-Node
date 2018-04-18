@@ -13,9 +13,10 @@
  *         File: irq.c
  *      Created: 2018-03-20
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: GPIO pin interrupt handling.
+ *  	Every interrupt is caught and, when assigned, the corresponding
+ *  	callback is called.
  */
 
 #include <em_gpio.h>
@@ -57,8 +58,8 @@ void GPIO_EVEN_IRQHandler(void){
   			irq[PB1_PIN]();
   	}
 
-  	if(irq_pins & (1 << LIS3DH_INT_PIN)){
-  		if (irq[LIS3DH_INT_PIN] != NULL)
-  			irq[LIS3DH_INT_PIN]();
+  	if(irq_pins & (1 << EXT_INT_PIN)){
+  		if (irq[EXT_INT_PIN] != NULL)
+  			irq[EXT_INT_PIN]();
   	}
 }

@@ -1,12 +1,24 @@
-/*
- * leuart.h
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- *  Created on: 26-jan.-2018
- *      Author: Guus Leenders
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
+ *
+ *         File: leuart.h
+ *      Created: 2017-12-19
+ *       Author: Guus Leenders
+ *
+ *  Description: Header file for leuart.c
  */
 
-#ifndef INC_LEUART_H_
-#define INC_LEUART_H_
+#ifndef _LEUART_H_
+#define _LEUART_H_
 
 #define RECEIVE_BUFFER_SIZE 50
 #define COMMAND_BUFFER_SIZE 50
@@ -27,4 +39,4 @@ void Leuart_ReadResponse(char * buffer, uint8_t bufferLength);
 Leuart_Status_t Leuart_SendCommand(char * cb, uint8_t cbl, volatile bool * wakeUp);
 Leuart_Status_t Leuart_WaitForResponse();
 
-#endif /* INC_LEUART_H_ */
+#endif /* _LEUART_H_ */

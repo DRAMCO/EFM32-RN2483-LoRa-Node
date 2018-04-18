@@ -13,9 +13,9 @@
  *         File: pm.c
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Power management functions. Allows you to enable/disable
+ *  	certain subsystems of the LoRa extension board.
  */
 
 #include <em_gpio.h>

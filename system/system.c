@@ -13,9 +13,9 @@
  *         File: system.c
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: EFM32 system functionality.
+ *  	Handles system initialization and sleep behavior.
  */
 
 #include <stdbool.h>
@@ -72,7 +72,7 @@ void System_Init(void){
 	IIC_Init();
 }
 
-void System_DeepSleep(uint8_t PM_ON){
+void System_DeepSleep(DeepSleep_State_t PM_ON){
 	// Disable SI7021 power
 	PM_Disable(PM_SENS_GECKO);
 
@@ -81,7 +81,7 @@ void System_DeepSleep(uint8_t PM_ON){
 		PM_Enable(PM_RN2483);
 	}
 	else{
-		LEUART_Reset(LEUART0);
+		LEUART_Reset(RN2483_UART);
 		PM_Disable(PM_RN2483);
 		GPIO_PinOutClear(RN2483_RESET_PORT, RN2483_RESET_PIN);
 		GPIO_PinOutClear(RN2483_RX_PORT, RN2483_RX_PIN);
@@ -95,8 +95,8 @@ void System_DeepSleep(uint8_t PM_ON){
 	else{
 		PM_Disable(PM_SENS_EXT);
 		IIC_Reset();
-		GPIO_PinModeSet(gpioPortD, 6, gpioModePushPull, 0);
-		GPIO_PinModeSet(gpioPortD, 7, gpioModePushPull, 0);
+		GPIO_PinModeSet(IIC_SDA_PORT, IIC_SDA_PIN, gpioModePushPull, 0);
+		GPIO_PinModeSet(IIC_SCL_PORT, IIC_SCL_PIN, gpioModePushPull, 0);
 	}
 
 	// Check what wake-up sources we need to enable

@@ -13,15 +13,14 @@
  *         File: si7021.h
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Header file for si7021.c
  */
 
-#ifndef SENSORS_SI7021_H_
-#define SENSORS_SI7021_H_
+#ifndef _SI7021_H_
+#define _SI7021_H_
 
 bool Si7021_Detect(void);
 bool Si7021_MeasureRHAndTemp(uint32_t *rhData, int32_t *tData);
 
-#endif /* SENSORS_SI7021_H_ */
+#endif /* _SI7021_H_ */

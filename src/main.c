@@ -1,19 +1,21 @@
-/**************************************************************************//**
- * @file
- * @brief Empty Project
- * @author Energy Micro AS
- * @version 3.20.2
- ******************************************************************************
- * @section License
- * <b>(C) Copyright 2014 Silicon Labs, http://www.silabs.com</b>
- *******************************************************************************
+/*  ____  ____      _    __  __  ____ ___
+ * |  _ \|  _ \    / \  |  \/  |/ ___/ _ \
+ * | | | | |_) |  / _ \ | |\/| | |  | | | |
+ * | |_| |  _ <  / ___ \| |  | | |__| |_| |
+ * |____/|_| \_\/_/   \_\_|  |_|\____\___/
+ *                           research group
+ *                             dramco.be/
  *
- * This file is licensed under the Silicon Labs Software License Agreement. See 
- * "http://developer.silabs.com/legal/version/v11/Silicon_Labs_Software_License_Agreement.txt"  
- * for details. Before using this software for any purpose, you must agree to the 
- * terms of that agreement.
+ *  KU Leuven - Technology Campus Gent,
+ *  Gebroeders De Smetstraat 1,
+ *  B-9000 Gent, Belgium
  *
- ******************************************************************************/
+ *         File: main.c
+ *      Created: 2018-01-18
+ *
+ *  Description: Main application.
+ */
+
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -63,7 +65,8 @@ typedef enum app_states{
 
 static volatile APP_State_t appState;
 
-// Interrupt callback functions
+/* Interrupt callback functions */
+// Button 1 callback
 void PB1_Pressed(void){
 	if(appState == SLEEP){
 		LED_On();
@@ -71,11 +74,8 @@ void PB1_Pressed(void){
 	}
 }
 
+// Button 0 callback
 void PB0_Pressed(void){
-
-}
-
-void Acc_Wake(void){
 }
 
 void LED_ERROR(uint8_t err){

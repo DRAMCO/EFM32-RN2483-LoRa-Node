@@ -13,9 +13,8 @@
  *         File: lora.c
  *      Created: 2018-03-21
  *       Author: Geoffrey Ottoy
- *      Version: 1.0
  *
- *  Description: TODO
+ *  Description: Basic LoRaWAN functionality (uses the RN2483 modem).
  */
 
 #include "system.h"
