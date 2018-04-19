@@ -183,10 +183,10 @@ int main(void){
 				// Sleep for a specified period of time;
 				wakeUp = false;
 				LoRa_Sleep(5*A_MINUTE, &wakeUp);
+				// wake up because of button pressed
 				if(wakeUp){ // get out of bed early
 					appState = WAKE_UP;
 				}
-				// wake up because of button pressed
 				else{ // sleep time has passed
 					appState = MEASURE;
 				}
