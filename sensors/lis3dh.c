@@ -110,7 +110,7 @@ bool Lis3dh_Init(void){
 		return false;
 	}
 
-	// Enable BDU, disable high resolution
+	// Enable continuous updates, enable high resolution output
 	wBuffer[0] = LIS3DH_REG_CTRL4;
 	wBuffer[1] = 0x08;
 	if(!IIC_WriteBuffer(LIS3DH_IIC_ADDRESS, wBuffer, 2)){
