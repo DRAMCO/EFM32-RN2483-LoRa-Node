@@ -13,13 +13,12 @@
  *         File: iic.c
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
+ *      Version: 1.0
  *
- *  Description: I2C functionality (wrapper for EFM 32).
- *  	Used for interfacing with sensors.
+ *  Description: TODO
  */
 
 #include <i2cspm.h>
-#include <em_i2c.h>
 
 #include "iic.h"
 
@@ -27,10 +26,6 @@ I2CSPM_Init_TypeDef i2cInit = I2CSPM_INIT_DEFAULT;
 
 void IIC_Init(void){
 	I2CSPM_Init(&i2cInit);
-}
-
-void IIC_Reset(void){
-	I2C_Reset(i2cInit.port);
 }
 
 bool IIC_WriteBuffer(uint8_t iicAddress, uint8_t * wBuffer, uint8_t wLength){
@@ -56,21 +51,16 @@ bool IIC_WriteBuffer(uint8_t iicAddress, uint8_t * wBuffer, uint8_t wLength){
 	return true;
 }
 
-bool IIC_ReadBuffer(uint8_t iicAddress, uint8_t regCommand, uint8_t * rBuffer, uint8_t rLength){
+bool IIC_ReadBuffer(uint8_t iicAddress, uint8_t * rBuffer, uint8_t rLength){
 	I2C_TransferSeq_TypeDef seq;
 	I2C_TransferReturn_TypeDef ret;
-	uint8_t i2c_write_data[1];
 
 	seq.addr  = iicAddress;
 	seq.flags = I2C_FLAG_READ;
-	/* Select command to issue */
-	i2c_write_data[0] = regCommand;
-	seq.buf[0].data   = i2c_write_data;
-	seq.buf[0].len    = 1;
 
 	/* Select location/length of data to be read */
-	seq.buf[1].data = rBuffer;
-	seq.buf[1].len  = rLength;
+	seq.buf[0].data = rBuffer;
+	seq.buf[0].len  = rLength;
 
 	ret = I2CSPM_Transfer(i2cInit.port, &seq);
 

@@ -13,19 +13,19 @@
  *         File: iic.h
  *      Created: 2018-03-22
  *       Author: Geoffrey Ottoy
+ *      Version: 1.0
  *
- *  Description: Header file for iic.c
+ *  Description: TODO
  */
 
-#ifndef _IIC_H_
-#define _IIC_H_
+#ifndef SYSTEM_IIC_H_
+#define SYSTEM_IIC_H_
 
 #include <stdbool.h>
 
 void IIC_Init(void);
-void IIC_Reset(void);
 bool IIC_WriteBuffer(uint8_t iicAddress, uint8_t * wBuffer, uint8_t wLength);
-bool IIC_ReadBuffer(uint8_t iicAddress, uint8_t regCommand, uint8_t * rBuffer, uint8_t rLength);
+bool IIC_ReadBuffer(uint8_t iicAddress, uint8_t * rBuffer, uint8_t rLength);
 bool IIC_WriteReadBuffer(uint8_t iicAddress, uint8_t * wBuffer, uint8_t wLength, uint8_t *rBuffer, uint8_t rLength);
 
-#endif /* _IIC_H_ */
+#endif /* SYSTEM_IIC_H_ */
